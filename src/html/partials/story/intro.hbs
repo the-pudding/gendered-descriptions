@@ -1,0 +1,97 @@
+<section>
+	<img class="story-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}">
+	<img class="story-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
+	{{#each doc.introText}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<img class="story-img" src="assets/images/{{{doc.fairy_2}}}.png" alt="{{{doc.fairy_2Alt}}}">
+	{{#each doc.postFairy}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<img class="story-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
+	{{#each doc.quiz}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<div class="quiz-images">
+		<div class="swiper-container">
+    <!-- Additional required wrapper -->
+	    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+					<img src="assets/images/quiz-image.png" alt="">
+				</div>
+        <div class="swiper-slide">
+					<img src="assets/images/quiz-image.png" alt="">
+				</div>
+        <div class="swiper-slide">
+					<img src="assets/images/quiz-image.png" alt="">
+				</div>
+	    </div>
+	    <!-- If we need pagination -->
+	    <div class="swiper-pagination"></div>
+
+	    <!-- If we need navigation buttons -->
+	    <div class="swiper-button-prev"></div>
+	    <div class="swiper-button-next"></div>
+		</div>
+	</div>
+	{{#each doc.postQuiz}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<div id="body-graphic" class="graphic-wrapper">
+		<div class="graphic">
+			<div class="graphic-title">
+				<p class="graphic-title-hed">{{{doc.bodyImgTitle}}}</p>
+				<p class="graphic-title-dek">{{{doc.bodyImgDek}}}</p>
+			</div>
+			<img class="story-img" src="assets/images/{{{doc.bodyImg}}}.png" alt="{{{doc.bodyImgAlt}}}">
+		</div>
+		<div class="story">
+			{{#each doc.bodyScroller}}
+				<div class="step">
+					<div class="prose-wrapper">
+						{{#each value}}
+							<p class="prose">{{{para}}}</p>
+						{{/each}}
+					</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+	{{#each doc.adj}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<img class="story-img" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}">
+	{{#each doc.adjPre}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<img class="story-img" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
+	{{#each doc.adjPreChart}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<div id="adj-graphic" class="graphic-wrapper">
+		<div class="graphic">
+			<div class="graphic-title">
+				<p class="graphic-title-hed">{{{doc.adjTitle}}}</p>
+				<p class="graphic-title-dek">{{{doc.adjDek}}}</p>
+			</div>
+			<div class="chart">
+			</div>
+		</div>
+		<div class="story">
+			{{#each doc.adjScroller}}
+				<div class="step">
+					<div class="prose-wrapper">
+						{{#each value}}
+							<p class="prose">{{{para}}}</p>
+						{{/each}}
+					</div>
+				</div>
+			{{/each}}
+		</div>
+	</div>
+	{{#each doc.conclusion}}
+		<p class='prose'>{{{value}}}</p>
+	{{/each}}
+	<img class="story-img" src="assets/images/{{{doc.endImg}}}.png" alt="">
+
+</section>
