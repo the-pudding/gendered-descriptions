@@ -67,31 +67,130 @@ function initAdjScroller(){
 }
 
 function buildAdjChart(data){
+
+  let width = d3.select("body").node().offsetWidth*.9;
+  let height = 400;
+
   let container = d3.select(".chart");
+
+  container.style("width",width+"px")
+  container.style("height",height+"px")
+
   let nested = d3.nest().key(function(d){
       return d.BodyPart;
     })
     .entries(data)
+
   let nestedMap = d3.map(nested,function(d){return d.key});
   let bodyParts = nested.map(function(d){return d.key});
 
+  d3.select(".part-selector").selectAll("div")
+    .data(bodyParts).enter().append("div")
+    .text(function(d){ return d; })
+    .on("click",function(d){
+      getNewData(d);
+    })
+    ;
+
+
+  function getNewData(bodyPart){
+    dataSelected = nestedMap.get(bodyPart).values;
+    dataSelected = filterData(dataSelected);
+    setScales();
+
+    container.selectAll("p").remove();
+
+
+    words = container.selectAll("p")
+      .data(dataSelected)
+      .enter()
+      .append("p")
+      .attr("class","word")
+      .text(function(d){
+        return d.adj;
+      })
+      .style("font-size",function(d){
+        return radiusScale(+d.total)+"px";
+      })
+      .style("color",function(d){
+        return colorScale(+d[varSelected]);
+      })
+      .each(function(d){
+        let bounds = d3.select(this).node().getBoundingClientRect();
+        d.width = bounds.width;
+        d.height = bounds.height;
+      })
+      .style("width",function(d){
+        return d.width+"px";
+      })
+      .style("height",function(d){
+        return d.height+"px";
+      })
+      .style("background-color",function(d){
+        let color = d3.color(colorScale(+d[varSelected]));
+        return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+      })
+
+    var simulation = d3.forceSimulation(dataSelected)
+      .force("x", d3.forceX(function(d) {
+          return x(+d[varSelected]);
+        })
+        .strength(1)
+      )
+      .force("y", d3.forceY(height / 2))
+      .force("collide", collide)
+      //.force("collide", collisionForce)
+      // .force("collide", d3.forceCollide().radius(function(d){
+      //     return d.width/2;
+      //   })
+      //   .iterations(1)
+      // )
+      .stop()
+      ;
+
+    for (var i = 0; i < 250; ++i) simulation.tick();
+
+    words
+      .style("left",function(d){
+        if(d.adj == "her"){
+          console.log(d);
+        }
+        return d.x+"px"
+        //return d.x+"px";
+      })
+      .style("top",function(d){
+        return d.y+"px";
+      })
+
+  }
+
   function setScales(){
     radiusScale.domain(d3.extent(dataSelected,function(d){ return +d.total }));
+    x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
+    dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
+    colorScale.domain([dataExtent[0],0,dataExtent[1]]);
   }
+
+  let varSelected = "logDiff";
+
   function filterData(data){
-    return data.filter(function(d){return removedWords.indexOf(d.adj) == -1});
+    return data.filter(function(d){
+      d.shareF = +d.totalF / +d.total;
+      d.logDiff = Math.log2(+d.pctF/+d.pctM);
+      return removedWords.indexOf(d.adj) == -1
+    });
   }
 
   let dataSelected = nestedMap.get("hair").values;
   dataSelected = filterData(dataSelected);
+  let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
 
-  let width = 700;
-  let height = 600;
+  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([12,36]);
+  let colorScale = d3.scaleLinear().domain([dataExtent[0],0,dataExtent[1]]).range(["blue","purple","red"]);
+  let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([0,width]);
+  x.domain([-2,4]).clamp(true)
 
-  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([10,24]);
-  let colorScale = d3.scaleLinear().domain([-20,0,4]).range(["red","purple","blue"]);
-
-  let words = container.selectAll("div")
+  let words = container.selectAll("p")
     .data(dataSelected)
     .enter()
     .append("p")
@@ -103,7 +202,7 @@ function buildAdjChart(data){
       return radiusScale(+d.total)+"px";
     })
     .style("color",function(d){
-      return colorScale(+d.diff);
+      return colorScale(+d[varSelected]);
     })
     .each(function(d){
       let bounds = d3.select(this).node().getBoundingClientRect();
@@ -116,31 +215,21 @@ function buildAdjChart(data){
     .style("height",function(d){
       return d.height+"px";
     })
+    .style("background-color",function(d){
+      let color = d3.color(colorScale(+d[varSelected]));
+      return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+    })
     ;
-
-  let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.diff })).range([0,width]);
-  x.domain([-20,20]).clamp(true)
 
   function rectWidth(word, value) {
     return word.length * value;
   }
 
   var collide = bboxCollide(function (d,i) {
-    d.value = d.height//radiusScale(+d.total)/10;
-    let heightMod = .5;
-    // return [
-    //   [
-    //     -d.width/2,
-    //     -d.height
-    //   ],
-    //   [
-    //     d.width/2,
-    //     d.height
-    //   ]
-    // ]
+      d.value = d.height//radiusScale(+d.total)/10;
+      let heightMod = .5;
       var width = d.width*1.2//rectWidth(d.adj, d.value)
       return [[-width / 2, -d.value * heightMod],[width / 2, d.value * heightMod]]
-
     })
     .strength(1)
     .iterations(2)
@@ -150,7 +239,7 @@ function buildAdjChart(data){
 
 	var simulation = d3.forceSimulation(dataSelected)
   	.force("x", d3.forceX(function(d) {
-        return x(+d.diff);
+        return x(+d[varSelected]);
       })
       .strength(1)
     )
@@ -174,12 +263,113 @@ function buildAdjChart(data){
         console.log(d);
       }
       return d.x+"px"
-      //return d.x+"px";
     })
     .style("top",function(d){
       return d.y+"px";
     })
 
+
+}
+
+function buildHistogram(data){
+
+
+  let container = d3.select(".chart");
+
+  let nested = d3.nest().key(function(d){
+      return d.BodyPart;
+    })
+    .entries(data)
+  let nestedMap = d3.map(nested,function(d){return d.key});
+  let bodyParts = nested.map(function(d){return d.key});
+
+  let varSelected = "shareF";
+
+  function filterData(data){
+    return data.filter(function(d){
+      d.shareF = +d.totalF / +d.total;
+      return removedWords.indexOf(d.adj) == -1
+    });
+  }
+
+  let dataSelected = nestedMap.get("hair").values;
+  dataSelected = filterData(dataSelected);
+
+  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([10,24]);
+  let colorScale = d3.scaleLinear().domain([0,.5,1]).range(["blue","purple","red"]);
+
+  let buckets = 15;
+  var histogramScale = d3.scaleQuantile().domain([0,1]).range(d3.range(buckets));
+
+  var nestedHistogram = d3.nest().key(function(d){
+  		return histogramScale(1 - +d.shareF)
+  	})
+  	.sortKeys(function(a,b){
+  		return +a - +b;
+  	})
+  	.sortValues(function(a,b){
+  		return +a["total"] - +b["total"]
+  	})
+  	.entries(dataSelected)
+  	;
+
+  let words = container
+    .attr("class","histogram")
+    .selectAll("div")
+    .data(nestedHistogram)
+    .enter()
+    .append("div")
+    .attr("class","column")
+    .selectAll("p")
+    .data(function(d){
+      return d.values;
+    })
+    .enter()
+    .append("p")
+    .text(function(d){
+      return d.adj;
+    })
+    .attr("class","word")
+    .style("font-size",function(d){
+      return radiusScale(+d.total)+"px";
+    })
+    .style("color",function(d){
+      return colorScale(+d[varSelected]);
+    })
+    .style("background-color",function(d){
+      let color = d3.color(colorScale(+d[varSelected]));
+      return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+    })
+    ;
+
+
+    // .append("p")
+    // .attr("class","word")
+    // .text(function(d){
+    //   return d.adj;
+    // })
+    // .style("font-size",function(d){
+    //   return radiusScale(+d.total)+"px";
+    // })
+    // .style("color",function(d){
+    //   return colorScale(+d[varSelected]);
+    // })
+    // .each(function(d){
+    //   let bounds = d3.select(this).node().getBoundingClientRect();
+    //   d.width = bounds.width;
+    //   d.height = bounds.height;
+    // })
+    // .style("width",function(d){
+    //   return d.width+"px";
+    // })
+    // .style("height",function(d){
+    //   return d.height+"px";
+    // })
+    // .style("background-color",function(d){
+    //   let color = d3.color(colorScale(+d[varSelected]));
+    //   return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+    // })
+    // ;
 
 }
 
