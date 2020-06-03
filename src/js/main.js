@@ -18,6 +18,8 @@ function resize() {
   }
 }
 
+
+
 function setupStickyHeader() {
   const $header = $body.select("header");
   if ($header.classed("is-sticky")) {

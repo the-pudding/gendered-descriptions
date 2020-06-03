@@ -1,7 +1,28 @@
 /* CUSTOM STORY STYLE */
 
+
+#body-graphic
+  .graphic
+    height 100vh
+    .body-img
+      max-width 100%
+      transform-origin 50% 0%
+      flex-grow 1
+      height 1px
+      #face-parts
+        .face-circle
+          path
+            opacity 0
+      #body_export
+        transform-origin 0 64%
+      .body-circle, .face-circle
+        fill-opacity .7
+        path
+          stroke-opacity .9
+
 .part-selector
   display flex
+  flex-wrap wrap
   text-decoration underline
   div
     margin-right 5px

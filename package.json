@@ -12,6 +12,7 @@
     "intersection-observer": "^0.10.0",
     "lodash.debounce": "4.0.8",
     "nouislider": "14.2.0",
+    "roughjs": "^4.3.1",
     "scrollama": "^2.2.1",
     "superagent": "5.2.2",
     "swiper": "^5.4.1"

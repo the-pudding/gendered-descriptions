@@ -2,10 +2,13 @@ import Swiper from 'swiper';
 import "intersection-observer";
 import scrollama from "scrollama";
 import loadData from './load-data'
+import rough from 'roughjs/bundled/rough.cjs';
+
 
 let quiz = null;
 let removedWords = ["her","blond","of","be"]
 /* global d3 */
+let zoomed = false;
 function resize() {}
 
 function initQuiz(){
@@ -412,9 +415,155 @@ function init() {
   initBodyScroller();
   initAdjScroller();
 
-	loadData(['adj.csv', 'adj.csv']).then(result => {
+	loadData(['adj_2.csv', 'parts.csv']).then(result => {
     buildAdjChart(result[0]);
+    setupBodyImg(result[1])
 	}).catch(console.error);
+
+}
+
+function setupBodyImg(data){
+
+  let bodyPartMap = d3.map(data,function(d){ return d.BodyPart; });
+
+  function getCentroid(element) {
+      var bbox = element.getBBox();
+      return [bbox.x + bbox.width/2, bbox.y + bbox.height/2];
+  }
+
+  let svg = d3.select(".body-img")
+
+  let roughSvg = rough.svg(svg.node());
+
+  let bodyAnnotated = [];
+  let bodyAnnotatedFace = [];
+
+  svg.select("#parts").selectAll("path").each(function(d){
+    bodyAnnotated.push(d3.select(this).attr("id"));
+  })
+
+  svg.select("#face-parts").selectAll("path").each(function(d){
+    bodyAnnotatedFace.push(d3.select(this).attr("id"));
+  })
+
+  let face = svg.select("#click-circle").on("click",function(d){
+    if(!zoomed){
+      zoomed = true;
+      svg.transition().duration(1000).style("transform","scale(3)")
+      svg.select("#zoom").transition().duration(1000).style("opacity",0);
+      svg.select("#face-parts").selectAll(".face-circle").selectAll("path").transition().duration(1000).style("opacity",1);
+      svg.selectAll(".body-circle").transition().duration(1000).style("opacity",0);
+    }
+    else {
+      zoomed = false;
+      svg.transition().duration(1000).style("transform",null)
+      svg.select("#zoom").transition().duration(1000).style("opacity",null);
+      svg.select("#face-parts").selectAll(".face-circle").selectAll("path").transition().duration(1000).style("opacity",null);
+      svg.selectAll(".body-circle").transition().duration(1000).style("opacity",null);
+    }
+  })
+
+  let extent = d3.extent(data.filter(function(d){
+    return d.skew != "Inf" && d.skew != "-Inf" && bodyAnnotated.indexOf(d.BodyPart) > -1;
+  }).map(function(d){
+    return Math.log2(d.pctF/d.pctM);
+  }));
+
+  let extentFace = d3.extent(data.filter(function(d){
+    return d.skew != "Inf" && d.skew != "-Inf" && bodyAnnotatedFace.indexOf(d.BodyPart) > -1;
+  }).map(function(d){
+    return Math.log2(d.pctF/d.pctM);
+  }));
+
+  let circleRadius = d3.scalePow().domain(extent).range([10,90]).exponent(.6)
+  let circleRadiusFace = d3.scalePow().domain(extentFace).range([4,40]).exponent(.5)
+
+  let colorScale = d3.scaleLinear().domain([extent[0],0,extent[1]]).range(["blue","purple","red"]);
+
+  let dots = svg.select("#parts").selectAll("path").attr("fill","none").datum(function(d){
+    let part = d3.select(this).attr("id");
+    let bodyData = bodyPartMap.get(part);
+    let centroid = getCentroid(d3.select(this).node())
+    return {"oddsRatio":Math.log2(bodyData.pctF/bodyData.pctM),"centroid": centroid, "bodyPart":part};
+  })
+  .each(function(d){
+    let centroid = d.centroid;
+    let oddsRatio = d.oddsRatio;
+    let part = d.bodyPart;
+    let radius = circleRadius(oddsRatio);
+    let faceCircle = false;
+    let strokeWidth = 3;
+    let hachureGap = 2;
+    let roughness = 1.2;
+    let fillWeight = .8;
+
+
+    if(d3.select(this.parentNode).attr("id") == "face-parts"){
+      faceCircle = true;
+      radius = circleRadiusFace(oddsRatio);
+      strokeWidth = 1;
+      hachureGap = 1;
+      fillWeight = .5;
+      roughness = .5;
+    }
+
+    let angle = d3.scaleLinear().domain([0,1]).range([-180,180]);
+
+
+    let rcCircle = roughSvg.circle(centroid[0], centroid[1], radius, {
+      fill: colorScale(oddsRatio),
+      fillStyle: 'hashure',
+      hachureGap:hachureGap,
+      roughness:roughness,
+      hachureAngle:angle(Math.random()),
+      //simplification:.1,
+      //bowing: 1,
+      //roughness: 2,
+      strokeWidth: strokeWidth,
+      fillWeight: fillWeight, // thicker lines for hachure
+      stroke:d3.color(colorScale(oddsRatio)).darker(1)
+    });
+
+    let appendedCircle = d3.select(this.parentNode).node().appendChild(rcCircle);
+    d3.select(appendedCircle)
+      .attr("class",function(d){
+        if(bodyAnnotatedFace.indexOf(part) > -1){
+          return "face-circle";
+        }
+        return "body-circle";
+      })
+      .on("click",function(d){
+      })
+      .attr("data-part",part)
+      ;
+
+
+    d3.select(this.parentNode)
+      .append("circle")
+      .attr("cx",centroid[0])
+      .attr("cy",centroid[1])
+      .attr("r",function(){
+        if(d3.select(this.parentNode).attr("id") == "face-parts"){
+          return circleRadiusFace(oddsRatio)
+        }
+        return circleRadius(oddsRatio)
+      })
+      .attr("fill",function(d){
+        return colorScale(oddsRatio)
+      })
+      .attr("class",function(d){
+        if(bodyAnnotatedFace.indexOf(part) > -1){
+          return "face-circle";
+        }
+        return "body-circle";
+      })
+      .on("click",function(d){
+      })
+      .attr("data-part",part)
+      .style("display","none")
+      ;
+  })
+  ;
 
 }
 
