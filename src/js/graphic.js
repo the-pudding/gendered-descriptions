@@ -478,9 +478,11 @@ function setupBodyImg(data){
   let circleRadius = d3.scalePow().domain(extent).range([10,90]).exponent(.6)
   let circleRadiusFace = d3.scalePow().domain(extentFace).range([4,40]).exponent(.5)
 
-  let colorScale = d3.scaleLinear().domain([extent[0],0,extent[1]]).range(["blue","purple","red"]);
+  let colorScale = d3.scaleThreshold().domain([extent[0],0,extent[1]]).range(["#4EC6C4","#4EC6C4","#FFA269"]);
+  let colorScaleInterpolate = d3.interpolateRgb("#4EC6C4","#FFA269");
 
   let dots = svg.select("#parts").selectAll("path").attr("fill","none").datum(function(d){
+
     let part = d3.select(this).attr("id");
     let bodyData = bodyPartMap.get(part);
     let centroid = getCentroid(d3.select(this).node())
@@ -512,7 +514,7 @@ function setupBodyImg(data){
 
     let rcCircle = roughSvg.circle(centroid[0], centroid[1], radius, {
       fill: colorScale(oddsRatio),
-      fillStyle: 'hashure',
+      fillStyle: 'solid',
       hachureGap:hachureGap,
       roughness:roughness,
       hachureAngle:angle(Math.random()),
