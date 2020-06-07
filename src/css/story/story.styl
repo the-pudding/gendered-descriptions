@@ -9,16 +9,50 @@
       transform-origin 50% 0%
       flex-grow 1
       height 1px
+      transform translate3d(0,0,0) scale(1)
+      #click-circle
+        cursor pointer
+      .tooltip
+        pointer-events none
+        display none
+        .tooltip-rect
+          fill white
+          pointer-events none
+          border-radius 8px
+          stroke #737373
+          stroke-width 1px
+        .tooltip-text
+          fill rgba(0,0,0,0.7)
+          pointer-events none
+          font-size 24px
+          font-family $atlas
+          font-weight 500
+          &:first-of-type
+            font-size 24px
+            text-transform uppercase
+
+
+      text
+        paint-order stroke
+        pointer-events none
+        user-select none
       #face-parts
-        .face-circle
-          path
-            opacity 0
+        display none
+        path
+          cursor pointer
+      #body-parts
+        path
+          cursor pointer
       #body_export
         transform-origin 0 64%
-      .body-circle, .face-circle
-        fill-opacity .7
-        path
-          stroke-opacity .9
+      #body-text
+        text
+          stroke-width 6px
+      #face-text
+        text
+          stroke-width 6px
+
+
 
 .part-selector
   display flex
