@@ -179,7 +179,7 @@ function buildAdjChart(data){
   function filterData(data){
     return data.filter(function(d){
       d.shareF = +d.totalF / +d.total;
-      d.logDiff = Math.log2(+d.pctF/+d.pctM);
+      d.logDiff = +d.pctF/+d.pctM;
       return removedWords.indexOf(d.adj) == -1
     });
   }
@@ -426,14 +426,25 @@ function init() {
 function bodyEvents(data){
   let bodyPartMap = d3.map(data,function(d){ return d.BodyPart; });
 
-  let svg = d3.select(".body-img")
+  let svg = d3.select(".body-img").on("click",function(){
+    console.log(zoomed);
+    if(zoomed){
+      d3.select("#click-circle").style("pointer-events",null)
+      zoomed = false;
+      svg.transition().duration(1000).style("transform",null)
+      svg.select("#zoom").transition().duration(1000).style("opacity",null);
+      svg.select("#face-parts").style("display",null)
+      svg.select("#body-parts").style("display",null)
+    }
+
+  })
 
   let toolTip = svg.append("g")
     .attr("class","tooltip")
 
   let toolTipRect = toolTip.append("rect")
     .attr("class","tooltip-rect")
-    .attr("width",300)
+    .attr("width",350)
     .attr("height",150)
     .attr("rx",8)
     .attr("ry",8)
@@ -475,7 +486,7 @@ function bodyEvents(data){
       let skew = bodyData.skew;
 
       d3.select(el.parentNode).datum(function(){
-        return {"oddsRatio":Math.log2(bodyData.pctF/bodyData.pctM),"centroid": centroid, "bodyPart":part};
+        return {"oddsRatio":bodyData.pctF/bodyData.pctM,"centroid": centroid, "bodyPart":part};
       })
 
       d3.select("#parts").selectAll("path").style("stroke",null);
@@ -520,6 +531,7 @@ function bodyEvents(data){
         .style("display","none");
     })
 
+
   d3.selectAll("#face-parts").selectAll("path")
     .on("mouseover",function(){
       mouseover(this,"face");
@@ -530,8 +542,12 @@ function bodyEvents(data){
       toolTip
         .style("display","none");
     })
+    .on("click",function(d,i){
+      d3.event.stopPropagation();
+    });
 
   let face = svg.select("#click-circle").on("click",function(d){
+    d3.event.stopPropagation();
     if(!zoomed){
       d3.select(this).style("pointer-events","none")
       zoomed = true;
@@ -560,10 +576,40 @@ function bodyEvents(data){
   .on("mouseout",function(d,i){
     svg.select("#zoom").select("g").selectAll("path").style("fill",null);
   })
-
 }
 
 function setupBodyImg(data){
+  let zoomed = false;
+
+  let face = d3.select("#click-circle").on("click",function(d){
+    if(!zoomed){
+      d3.select(this).style("pointer-events","none")
+      zoomed = true;
+      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3)")
+      svg.select("#zoom").transition().duration(1000).style("opacity",0);
+      svg.select("#face-parts").style("display","block")
+      svg.select("#body-parts").style("display","none")
+      //svg.selectAll(".body-circle").transition().duration(1000).style("opacity",0);
+    }
+    else {
+      d3.select(this).style("pointer-events",null)
+      zoomed = false;
+      svg.transition().duration(1000).style("transform",null)
+      svg.select("#zoom").transition().duration(1000).style("opacity",null);
+      svg.select("#face-parts").style("display",null)
+      svg.select("#body-parts").style("display",null)
+    }
+  })
+  .on("mouseover",function(d,i){
+    svg.select("#zoom").select("g").selectAll("path").each(function(d,i){
+      if(i==0){
+        d3.select(this).style("fill","#ffffcc");
+      }
+    })
+  })
+  .on("mouseout",function(d,i){
+    svg.select("#zoom").select("g").selectAll("path").style("fill",null);
+  });
 
   let bodyPartMap = d3.map(data,function(d){ return d.BodyPart; });
 
@@ -590,19 +636,19 @@ function setupBodyImg(data){
   let extent = d3.extent(data.filter(function(d){
     return d.skew != "Inf" && d.skew != "-Inf" && bodyAnnotated.indexOf(d.BodyPart) > -1;
   }).map(function(d){
-    return Math.log2(d.pctF/d.pctM);
+    return Math.abs(d.skew);
   }));
 
   let extentFace = d3.extent(data.filter(function(d){
     return d.skew != "Inf" && d.skew != "-Inf" && bodyAnnotatedFace.indexOf(d.BodyPart) > -1;
   }).map(function(d){
-    return Math.log2(d.pctF/d.pctM);
+    return Math.abs(d.skew);
   }));
 
-  let circleRadius = d3.scalePow().domain(extent).range([10,90]).exponent(.6)
-  let circleRadiusFace = d3.scalePow().domain(extentFace).range([4,40]).exponent(.5)
+  let circleRadius = d3.scalePow().domain(extent).range([30,110]).exponent(.4)
+  let circleRadiusFace = d3.scalePow().domain(extentFace).range([8,60]).exponent(.4)
 
-  let colorScale = d3.scaleThreshold().domain([extent[0],0,extent[1]]).range(["#4EC6C4","#4EC6C4","#FFA269"]);
+  let colorScale = d3.scaleThreshold().domain([extent[0],0,extent[1]]).range(["#FFA269","#4EC6C4","#4EC6C4"]);
   let colorScaleInterpolate = d3.interpolateRgb("#4EC6C4","#FFA269");
 
   let dots = svg.select("#parts").selectAll("path").attr("fill","none").attr("stroke","none").datum(function(d){
@@ -611,41 +657,36 @@ function setupBodyImg(data){
 
     let bodyData = bodyPartMap.get(part);
     let centroid = getCentroid(d3.select(this).node())
-
-
-    return {"oddsRatio":Math.log2(bodyData.pctF/bodyData.pctM),"centroid": centroid, "bodyPart":part};
+    return {"oddsRatio":bodyData.pctF/bodyData.pctM,"centroid": centroid, "bodyPart":part,"skew":bodyData.skew};
   })
   .each(function(d){
-
 
     let centroid = d.centroid;
     let oddsRatio = d.oddsRatio;
     let part = d.bodyPart;
-    let radius = circleRadius(oddsRatio);
     let faceCircle = false;
     let strokeWidth = 3;
     let hachureGap = 2;
     let roughness = 1.2;
     let fillWeight = .8;
-
+    let skew = d.skew;
+    let radius = circleRadius(Math.abs(skew));
 
 
     if(d3.select(this.parentNode).attr("id") == "face-parts"){
       faceCircle = true;
-      radius = circleRadiusFace(oddsRatio);
+      radius = circleRadiusFace(Math.abs(skew));
       strokeWidth = 1;
       hachureGap = 1;
       fillWeight = .5;
       roughness = .5;
-
-
     }
 
     let angle = d3.scaleLinear().domain([0,1]).range([-180,180]);
-
+    let fillColor = d3.color(colorScale(skew));
 
     let rcCircle = roughSvg.circle(centroid[0], centroid[1], radius, {
-      fill: colorScale(oddsRatio),
+      fill: "rgba("+fillColor.r+","+fillColor.g+","+fillColor.b+",.8)",
       fillStyle: 'solid',
       hachureGap:hachureGap,
       roughness:roughness,
@@ -655,7 +696,7 @@ function setupBodyImg(data){
       //roughness: 2,
       strokeWidth: strokeWidth,
       fillWeight: fillWeight, // thicker lines for hachure
-      stroke:d3.color(colorScale(oddsRatio)).darker(1)
+      stroke:d3.color(colorScale(skew)).darker(1)
     });
 
     let appendedCircle = d3.select(this.parentNode).node().appendChild(rcCircle);
@@ -670,34 +711,20 @@ function setupBodyImg(data){
       .on("click",function(d){
       })
       .attr("data-part",part)
+      .datum(radius)
       ;
 
-    // d3.select(this.parentNode)
-    //   .append("circle")
-    //   .attr("cx",centroid[0])
-    //   .attr("cy",centroid[1])
-    //   .attr("r",function(){
-    //     if(d3.select(this.parentNode).attr("id") == "face-parts"){
-    //       return circleRadiusFace(oddsRatio)
-    //     }
-    //     return circleRadius(oddsRatio)
-    //   })
-    //   .attr("fill",function(d){
-    //     return colorScale(oddsRatio)
-    //   })
-    //   .attr("class",function(d){
-    //     if(bodyAnnotatedFace.indexOf(part) > -1){
-    //       return "face-circle";
-    //     }
-    //     return "body-circle";
-    //   })
-    //   .on("click",function(d){
-    //   })
-    //   .attr("data-part",part)
-    //   .style("display","none")
-    //   ;
+
   })
   ;
+
+  d3.selectAll(".body-circle").sort(function(a,b){
+    return b-a;
+  })
+
+  d3.selectAll(".face-circle").sort(function(a,b){
+    return b-a;
+  })
 
 }
 
