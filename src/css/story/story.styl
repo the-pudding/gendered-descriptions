@@ -135,7 +135,7 @@
       position absolute
       width 100%
       height 100%
-    .one-scale, .two-scale, .three-scale
+    .one-scale, .two-scale, .three-scale, .four-scale
       width 0px
       height 100%
       max-height 500px
@@ -166,6 +166,49 @@
     .three-scale
       &:before
         content '8x'
+    .four-scale
+      &:before
+        content '>16x'
+    .last
+      &:before
+        top -63px
+      &:after
+        content 'more likely to be used in describing women'
+        position absolute
+        top 0px
+        left 40px
+        transform translate(-50%,-100%)
+        font-family 'Walter Turncoat'
+        width 110px
+        text-align left
+        font-size 11px
+        font-weight 600
+        text-transform uppercase
+        letter-spacing 1px
+        color rgba(0, 0, 0, .8)
+        colo #503423
+      height calc(100% - 110px)
+
+    .first
+      &:before
+        top -63px
+      &:after
+        content 'more likely to be used in describing men'
+        position absolute
+        top 0px
+        right -10px
+        transform translate(0%,-100%)
+        font-family 'Walter Turncoat'
+        width 110px
+        text-align right
+        font-size 11px
+        font-weight 600
+        text-transform uppercase
+        letter-spacing 1px
+        color rgba(0, 0, 0, .8)
+        color #2b6564
+
+      height calc(100% - 110px)
 
 
     .mid

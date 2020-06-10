@@ -169,29 +169,142 @@ function buildAdjChart(data){
     if(dataExtent[0] < -4){
       dataExtent[0] = -4;
     }
-    if(dataExtent[0] > 4){
-      dataExtent[0] = 4;
+    if(dataExtent[1] > 4){
+      dataExtent[1] = 4;
     }
+    if(dataExtent[0] > -1){
+      dataExtent[0] = -1.1;
+    }
+    if(dataExtent[1] < 1){
+      dataExtent[1] = 1.1;
+    }
+
+
     x.domain(dataExtent).clamp(true);
     midScale.transition().duration(1000).delay(500)
       .style("left",x(0)+"px");
-    oneScale.transition().duration(1000).delay(500)
+
+    oneScale
+      .classed("last",function(d){
+        return getLast(d);
+      })
+      .classed("first",function(d){
+        return getFirst(d);
+      })
+      .transition().duration(1000).delay(500)
       .style("left",function(d){
         return x(d)+"px"
+      })
+      .style("opacity",function(d,i){
+        if(dataExtent[0] > -1 && i == 0){
+          return 0;
+        }
+        if(dataExtent[1] < 1 && i == 1){
+          return 0;
+        }
+        return null;
       })
       ;
 
-    twoScale.transition().duration(1000).delay(500)
+    twoScale
+      .classed("last",function(d){
+        return getLast(d);
+      })
+      .classed("first",function(d){
+        return getFirst(d);
+      })
+      .transition().duration(1000).delay(500)
       .style("left",function(d){
         return x(d)+"px"
+      })
+      .style("opacity",function(d,i){
+        if(dataExtent[0] > -2 && i == 0){
+          return 0;
+        }
+        if(dataExtent[1] < 2 && i == 1){
+          return 0;
+        }
+        return null;
       })
       ;
 
-    threeScale.transition().duration(1000).delay(500)
+    threeScale
+      .classed("last",function(d){
+        return getLast(d);
+      })
+      .classed("first",function(d){
+        return getFirst(d);
+      })
+      .transition().duration(1000).delay(500)
       .style("left",function(d){
         return x(d)+"px"
       })
+      .style("opacity",function(d,i){
+        if(dataExtent[0] > -3 && i == 0){
+          return 0;
+        }
+        if(dataExtent[1] < 3 && i == 1){
+          return 0;
+        }
+        return null;
+      })
       ;
+
+    fourScale
+      .classed("last",function(d){
+        return getLast(d);
+      })
+      .classed("first",function(d){
+        return getFirst(d);
+      })
+      .transition().duration(1000).delay(500)
+      .style("left",function(d){
+        return x(d)+"px"
+      })
+      .style("opacity",function(d,i){
+        console.log(dataExtent);
+        if(dataExtent[0] > -4 && i == 0){
+          return 0;
+        }
+        if(dataExtent[1] < 4 && i == 1){
+          return 0;
+        }
+        return null;
+      })
+      ;
+  }
+
+  function getFirst(value){
+    if(value == 1 && dataExtent[1] > 1 && dataExtent[1] < 2){
+      return true
+    }
+    else if(value == 2 && dataExtent[1] > 2 && dataExtent[1] < 3){
+      return true
+    }
+    else if(value == 3 && dataExtent[1] > 3 && dataExtent[1] < 4){
+      return true
+    }
+    else if(value >= dataExtent[1] && value > 0){
+      return true;
+    }
+
+    return false;
+  }
+
+  function getLast(value){
+    if(value == -1 && dataExtent[0] < -1 && dataExtent[0] > -2){
+      return true
+    }
+    else if(value == -2 && dataExtent[0] < -2 && dataExtent[0] > -3){
+      return true
+    }
+    else if(value == -3 && dataExtent[0] < -3 && dataExtent[0] > -4){
+      return true
+    }
+    else if(value <= dataExtent[0] && value < 0){
+      return true;
+    }
+    return false
   }
 
   let varSelected = "logDiff";
@@ -227,6 +340,7 @@ function buildAdjChart(data){
   let oneScale = scales.append("div").attr("class","one-scales").selectAll("div").data([-1,1]).enter().append("div").attr("class","one-scale")
   let twoScale = scales.append("div").attr("class","two-scales").selectAll("div").data([-2,2]).enter().append("div").attr("class","two-scale")
   let threeScale = scales.append("div").attr("class","three-scales").selectAll("div").data([-3,3]).enter().append("div").attr("class","three-scale")
+  let fourScale = scales.append("div").attr("class","four-scales").selectAll("div").data([-4,4]).enter().append("div").attr("class","four-scale")
 
   setScales();
 
