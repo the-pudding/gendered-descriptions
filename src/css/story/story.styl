@@ -1,9 +1,37 @@
 /* CUSTOM STORY STYLE */
 
+.byline
+  text-align center
+  font-size 16px
+
+.text-large
+  text-align center
+  font-size 36px
+  margin-top 7rem
+  font-family $lyon-hed
+
+
+#adj-graphic
+  .graphic-title-dek
+    max-width 600px
 
 #body-graphic
+  margin-bottom 3rem
+  .story
+    @media screen and (min-width: 900px)
+      margin-top -50vh
+      .prose-wrapper
+        margin 0
+        max-width 600px
+        width calc(100vw - 700px)
+        margin-left 100px
   .graphic
     height 100vh
+    @media screen and (min-width: 900px)
+      right auto
+      margin 0
+      margin-left auto
+      max-width 600px
     .body-img
       max-width 100%
       transform-origin 50% 0%
@@ -25,7 +53,7 @@
           fill rgba(0,0,0,0.7)
           pointer-events none
           font-size 28px
-          font-family $atlas
+          font-family 'Walter Turncoat'
           font-weight 400
           &:first-of-type
             font-size 28px
@@ -60,6 +88,7 @@
   text-decoration underline
   div
     margin-right 5px
+    font-family 'Walter Turncoat'
 
 .histogram
   display flex
@@ -85,26 +114,100 @@
       //border-radius 50%
       padding 4px
       margin-top 2px
+      font-family 'Walter Turncoat'
 .chart
   position relative
   //width 90%
-  background #f7f7f7
   //max-width 850px
   margin 0 auto
+  margin-top 100px
+  &:before
+    content ''
+    width 100%
+    height 2px
+    top 50%
+    position absolute
+    background #c7c7c7
+    left 0px
+    z-index 0
+  .scales
+    .one-scales, .two-scales
+      position absolute
+      width 100%
+      height 100%
+    .one-scale, .two-scale, .three-scale
+      width 0px
+      height 100%
+      max-height 500px
+      position absolute
+      border-left 1px dashed #565656
+      top 50%
+      transform translate(0,-50%)
+      &:before
+        content '2x'
+        position absolute
+        top -10px
+        left 0px
+        transform translate(-50%,-100%)
+        font-family 'Walter Turncoat'
+        width 127px
+        font-size 14px
+        font-weight 600
+        text-align center
+        text-transform uppercase
+        letter-spacing 1px
+        color rgb(233, 148, 96)
+      &:last-of-type
+        &:before
+          color rgb(71, 181, 179)
+    .two-scale
+      &:before
+        content '4x'
+    .three-scale
+      &:before
+        content '8x'
+
+
+    .mid
+      width 0px
+      height 100%
+      max-height 500px
+      position absolute
+      border-left 2px dashed #565656
+      top 50%
+      transform translate(0,-50%)
+      &:before
+        content '50/50 Split'
+        position absolute
+        top -10px
+        left 0px
+        transform translate(-50%,-100%)
+        font-family 'Walter Turncoat'
+        width 127px
+        font-size 14px
+        font-weight 600
+        text-align center
+        text-transform uppercase
+        letter-spacing 1px
+        color rgba(0, 0, 0, 0.72)
   .word
     font-size 12px
     position absolute
+    font-weight 400
     margin 0
     //padding 1px 3px
     line-height 1
     //background red
     font-family $atlas
+    letter-spacing .5px
     transform translate(-50%,-50%)
     display flex
     align-items center
     color rbga(0,0,0,0)
-    font-weight 500
     //border-radius 50%
+    //-webkit-font-smoothing auto
+    font-family 'Walter Turncoat'
+    z-index 1
 
 .story-img
   max-width 800px
@@ -113,10 +216,12 @@
   margin-bottom 3rem
 
 .title-img
-  width 100%
+  width 95%
   max-width 2000px
+  margin-top 1rem
 .fairy-img
   max-width 700px
+  margin-bottom 0
 .fairy-img-2
   max-width 600px
 .parser-img
@@ -143,10 +248,13 @@ footer
     right 0px
     display flex
     flex-direction column
+
+
     .story-img
       flex-grow 1
       width auto
       max-width none
+
   .story
     position relative
     pointer-events none
@@ -169,23 +277,27 @@ footer
     max-width 600px
     margin 0 auto
     .graphic-title-hed
-      font-size 22px
+      font-size 30px
       text-align center
-      font-family $lyon-hed
-      font-weight 600
+      font-family 'Walter Turncoat'
+      font-weight 300
       color $text-black
       margin-bottom 0px
-      text-transform uppercase
+      //text-transform uppercase
       padding-top 1.5rem
-      letter-spacing 2px
+      margin-top 0
     .graphic-title-dek
-      font-size 14px
+      font-size 18px
       font-family $atlas
+      font-family 'Walter Turncoat'
+      font-weight 300
       font-weight 400
-      max-width 500px
+      max-width 450px
       margin 0 auto
       margin-bottom 1.5rem
-      color rgba(0,0,0,.7)
+      line-height 1.2
+      color #808285
+      //color rgba(0,0,0,.7)
       text-align center
       .circle-wrapper
         display inline-flex
@@ -203,14 +315,22 @@ footer
         padding-left 2px
         padding-right 2px
         .circle
-          width 20px
+          //width 20px
           height 20px
-          background-color rgba(0,0,0,.3)
-          border-radius 50%
+          color #276766
+          background-color #65d1cf
+          border-radius 5px
+          padding-left 3px
+          padding-right 3px
           align-self center
-          font-size 12px
+          font-size 14px
           font-weight 600
-          margin-rigth 3px
+          letter-spacing 1px
+          transform translate(0,-2px)
+          margin-right 3px
+          &:first-of-type
+            background #f6b383
+            color #8C512F
 
 
 #content

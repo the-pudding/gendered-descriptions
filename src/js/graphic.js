@@ -18,7 +18,7 @@ function initQuiz(){
 }
 
 function initDek(){
-  let container = d3.select(".body-graphic").select(".graphic-title-dek");
+  let container = d3.select("#body-graphic").select(".graphic-title-dek");
   container.selectAll("span").each(function(){
     let attr = d3.select(this).attr("data-attr");
     if(attr == "circle-size"){
@@ -38,9 +38,9 @@ function initDek(){
         .attr("class","circle")
         .text(function(d,i){
           if(i==0){
-            return "w";
+            return "women";
           }
-          return "m";
+          return "men";
         })
     }
   })
@@ -97,12 +97,12 @@ function buildAdjChart(data){
 
 
   function getNewData(bodyPart){
+
     dataSelected = nestedMap.get(bodyPart).values;
     dataSelected = filterData(dataSelected);
     setScales();
 
     container.selectAll("p").remove();
-
 
     words = container.selectAll("p")
       .data(dataSelected)
@@ -116,7 +116,7 @@ function buildAdjChart(data){
         return radiusScale(+d.total)+"px";
       })
       .style("color",function(d){
-        return colorScale(+d[varSelected]);
+        return d3.color(getColor(+d[varSelected])).darker(.25);
       })
       .each(function(d){
         let bounds = d3.select(this).node().getBoundingClientRect();
@@ -130,24 +130,20 @@ function buildAdjChart(data){
         return d.height+"px";
       })
       .style("background-color",function(d){
-        let color = d3.color(colorScale(+d[varSelected]));
-        return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+        let color = d3.hsl(getColor(+d[varSelected]));
+        color.l = .97;
+        return color//"rgba("+color.h+","+color.s+","+color.b+",.1)"
       })
+
 
     var simulation = d3.forceSimulation(dataSelected)
       .force("x", d3.forceX(function(d) {
           return x(+d[varSelected]);
         })
-        .strength(1)
+        .strength(3)
       )
-      .force("y", d3.forceY(height / 2))
+    	.force("y", d3.forceY(height / 2))
       .force("collide", collide)
-      //.force("collide", collisionForce)
-      // .force("collide", d3.forceCollide().radius(function(d){
-      //     return d.width/2;
-      //   })
-      //   .iterations(1)
-      // )
       .stop()
       ;
 
@@ -169,9 +165,33 @@ function buildAdjChart(data){
 
   function setScales(){
     radiusScale.domain(d3.extent(dataSelected,function(d){ return +d.total }));
-    x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
     dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
-    colorScale.domain([dataExtent[0],0,dataExtent[1]]);
+    if(dataExtent[0] < -4){
+      dataExtent[0] = -4;
+    }
+    if(dataExtent[0] > 4){
+      dataExtent[0] = 4;
+    }
+    x.domain(dataExtent).clamp(true);
+    midScale.transition().duration(1000).delay(500)
+      .style("left",x(0)+"px");
+    oneScale.transition().duration(1000).delay(500)
+      .style("left",function(d){
+        return x(d)+"px"
+      })
+      ;
+
+    twoScale.transition().duration(1000).delay(500)
+      .style("left",function(d){
+        return x(d)+"px"
+      })
+      ;
+
+    threeScale.transition().duration(1000).delay(500)
+      .style("left",function(d){
+        return x(d)+"px"
+      })
+      ;
   }
 
   let varSelected = "logDiff";
@@ -179,21 +199,38 @@ function buildAdjChart(data){
   function filterData(data){
     return data.filter(function(d){
       d.shareF = +d.totalF / +d.total;
-      d.logDiff = +d.pctF/+d.pctM;
+      if(d.diff > 0){
+        d.logDiff = Math.log2(+d.diff);
+      }
+      else {
+        d.logDiff = Math.log2(Math.abs(+d.diff))*-1;
+      }
       return removedWords.indexOf(d.adj) == -1
     });
+  }
+
+  function getColor(value){
+    return colorScaleInterpolate(colorScale(value));
   }
 
   let dataSelected = nestedMap.get("hair").values;
   dataSelected = filterData(dataSelected);
   let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
-
-  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([12,36]);
-  let colorScale = d3.scaleLinear().domain([dataExtent[0],0,dataExtent[1]]).range(["blue","purple","red"]);
+  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([18,48]);
+  let colorScale = d3.scaleLinear().domain([-1,0,1]).range([0,.5,1]).clamp(true);
+  let colorScaleInterpolate = d3.interpolateHcl("#FFA269","#4EC6C4");
   let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([0,width]);
-  x.domain([-2,4]).clamp(true)
+  x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
 
-  let words = container.selectAll("p")
+  let scales = container.append("div").attr("class","scales");
+  let midScale = scales.append("div").attr("class","mid");
+  let oneScale = scales.append("div").attr("class","one-scales").selectAll("div").data([-1,1]).enter().append("div").attr("class","one-scale")
+  let twoScale = scales.append("div").attr("class","two-scales").selectAll("div").data([-2,2]).enter().append("div").attr("class","two-scale")
+  let threeScale = scales.append("div").attr("class","three-scales").selectAll("div").data([-3,3]).enter().append("div").attr("class","three-scale")
+
+  setScales();
+
+  let words = container.append("div").attr("class","word-wrapper").selectAll("p")
     .data(dataSelected)
     .enter()
     .append("p")
@@ -205,7 +242,7 @@ function buildAdjChart(data){
       return radiusScale(+d.total)+"px";
     })
     .style("color",function(d){
-      return colorScale(+d[varSelected]);
+      return d3.color(getColor(+d[varSelected])).darker(.25);
     })
     .each(function(d){
       let bounds = d3.select(this).node().getBoundingClientRect();
@@ -219,10 +256,12 @@ function buildAdjChart(data){
       return d.height+"px";
     })
     .style("background-color",function(d){
-      let color = d3.color(colorScale(+d[varSelected]));
-      return "rgba("+color.r+","+color.g+","+color.b+",.1)"
+      let color = d3.hsl(getColor(+d[varSelected]));
+      color.l = .97;
+      return color//"rgba("+color.h+","+color.s+","+color.b+",.1)"
     })
     ;
+
 
   function rectWidth(word, value) {
     return word.length * value;
@@ -244,7 +283,7 @@ function buildAdjChart(data){
   	.force("x", d3.forceX(function(d) {
         return x(+d[varSelected]);
       })
-      .strength(1)
+      .strength(3)
     )
   	.force("y", d3.forceY(height / 2))
     .force("collide", collide)
