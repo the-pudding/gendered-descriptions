@@ -5,11 +5,17 @@
 	</div>
 	<p class="text-large">{{{doc.fairyAlt}}}</p>
 
+
 	<img class="story-img fairy-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
 	{{#each doc.introText}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
-	<img class="story-img fairy-img-2" src="assets/images/{{{doc.fairy_2}}}.png" alt="{{{doc.fairy_2Alt}}}">
+	<div id="fairy-2" class="fairy-wrapper-2">
+		<img class="fairy-2-svg" inline src='fairy-2.svg'>
+		<img class="story-img fairy-img-2" src="assets/images/{{{doc.fairy_2}}}.png" alt="{{{doc.fairy_2Alt}}}">
+
+	</div>
+
 	{{#each doc.postFairy}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
@@ -46,9 +52,27 @@
 		<div class="graphic">
 			<div class="graphic-title">
 				<p class="graphic-title-hed">{{{doc.bodyImgTitle}}}</p>
-				<p class="graphic-title-dek">{{{doc.bodyImgDek}}}</p>
+				<div class="body-graphic-legend">
+					<div class="left">
+						<p class="text-exp">more frequently used for <span>women</span></p>
+						<div class="circles-left circles">
+							<div class="circle"></div>
+							<div class="circle"></div>
+							<div class="circle"></div>
+						</div>
+					</div>
+					<p class="center-text">gender<br>skew</p>
+					<div class="right">
+						<div class="circles-right circles">
+							<div class="circle"></div>
+							<div class="circle"></div>
+							<div class="circle"></div>
+						</div>
+						<p class="text-exp">more frequently used for <span>men</span></p>
+					</div>
+				</div>
 			</div>
-			<img class="body-img" inline src='body_20.svg'>
+			<img class="body-img head-zoomed" inline src='body_22.svg'>
 
 		</div>
 		<div class="story">

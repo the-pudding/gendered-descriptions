@@ -4,7 +4,7 @@ import scrollama from "scrollama";
 import loadData from './load-data'
 import rough from 'roughjs/bundled/rough.cjs';
 
-
+let fairyTextFadedIn = false;
 let quiz = null;
 let removedWords = ["her","blond","of","be"]
 /* global d3 */
@@ -46,6 +46,32 @@ function initDek(){
   })
 }
 
+function fairyScroll(){
+  const scroller = scrollama();
+  const fairySvg = d3.select("#fairy-2").select("svg");
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,3]);
+
+  scroller
+    .setup({
+      container: '#fairy-2', // our outermost scrollytelling element
+      step: ".fairy-2-svg",
+      progress:true,
+      offset: .7 // set the trigger to be 1/2 way down screen
+    })
+    .onStepEnter(response => {
+      if(!fairyTextFadedIn){
+        fairyTextFadedIn = true;
+        fairySvg.selectAll("tspan").transition().duration(500).delay(function(d,i){
+          return i*30;
+        }).style("opacity",1)
+      }
+    })
+    .onStepProgress(response => {
+      fairySvg.style("top",offsetScale(response.progress)+"vw");
+    })
+    ;
+}
+
 function initAdjScroller(){
   const scroller = scrollama();
 
@@ -58,8 +84,8 @@ function initAdjScroller(){
       offset: 0.5 // set the trigger to be 1/2 way down screen
     })
     .onStepEnter(response => {
-      console.log("response");
-      // { element, index, direction }
+      // { element, index, direction } = response;
+      // console.log(index);
     })
     .onStepExit(response => {
       // { element, index, direction }
@@ -531,6 +557,61 @@ function buildHistogram(data){
 
 function initBodyScroller(){
   const scroller = scrollama();
+  let svg = d3.select(".body-img");
+
+  function stepEnter(response){
+    let index = response.index;
+    if(index==0){
+      zoomed = true;
+      svg.classed("head-zoomed",true);
+      svg.classed("head-visible",true);
+      svg.classed("body-visible",false);
+      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
+      svg.select("#hair").selectAll("path").style("stroke",null);
+    }
+    else if(index == 1){
+      zoomed = true;
+      svg.classed("head-zoomed",true);
+      svg.classed("head-visible",true);
+      svg.classed("body-visible",false);
+      svg.select("#hair").selectAll("path").style("stroke","black");
+      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
+      svg.select("#click-circle").style("pointer-events","none")
+      svg.select("#zoom").transition().duration(1000).style("opacity",0);
+      svg.select("#nipple").selectAll("path").style("stroke",null);
+      svg.select("#hip").selectAll("path").style("stroke",null);
+      svg.select("#waist").selectAll("path").style("stroke",null);
+      svg.select("#thigh").selectAll("path").style("stroke",null);
+    }
+    else if(index == 2){
+      zoomed = false;
+      svg.select("#hair").selectAll("path").style("stroke",null);
+      svg.classed("head-zoomed",false);
+      svg.classed("head-visible",false);
+      svg.classed("body-visible",true);
+      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(1)")
+      svg.select("#click-circle").style("pointer-events","all")
+      svg.select("#zoom").transition().duration(1000).style("opacity",1);
+      svg.select("#nipple").selectAll("path").style("stroke","black");
+      svg.select("#hip").selectAll("path").style("stroke","black");
+      svg.select("#waist").selectAll("path").style("stroke","black");
+      svg.select("#thigh").selectAll("path").style("stroke","black");
+      svg.select("#chest").selectAll("path").style("stroke",null);
+      svg.select("#fist").selectAll("path").style("stroke",null);
+      svg.select("#knuckle").selectAll("path").style("stroke",null);
+    }
+    else if(index == 3){
+      svg.select("#nipple").selectAll("path").style("stroke",null);
+      svg.select("#hip").selectAll("path").style("stroke",null);
+      svg.select("#waist").selectAll("path").style("stroke",null);
+      svg.select("#thigh").selectAll("path").style("stroke",null);
+      svg.select("#chest").selectAll("path").style("stroke","black");
+      svg.select("#fist").selectAll("path").style("stroke","black");
+      svg.select("#knuckle").selectAll("path").style("stroke","black");
+      svg.select("#click-circle").style("pointer-events","all")
+      svg.select("#zoom").transition().duration(1000).style("opacity",1);
+    }
+  }
 
   scroller
     .setup({
@@ -538,12 +619,9 @@ function initBodyScroller(){
 			graphic: '.graphic', // the graphic
 			text: '.story', // the step container
 			step: '.story .step', // the step elements
-			offset: 0.5 // set the trigger to be 1/2 way down screen
+			offset: 0.8 // set the trigger to be 1/2 way down screen
     })
-    .onStepEnter(response => {
-      console.log("response");
-      // { element, index, direction }
-    })
+    .onStepEnter(stepEnter)
     .onStepExit(response => {
       // { element, index, direction }
     });
@@ -567,6 +645,7 @@ function init() {
   initDek();
   initBodyScroller();
   initAdjScroller();
+  fairyScroll();
 
 	loadData(['adj_2.csv', 'parts.csv']).then(result => {
     buildAdjChart(result[0]);
@@ -580,14 +659,14 @@ function bodyEvents(data){
   let bodyPartMap = d3.map(data,function(d){ return d.BodyPart; });
 
   let svg = d3.select(".body-img").on("click",function(){
-    console.log(zoomed);
     if(zoomed){
-      d3.select("#click-circle").style("pointer-events",null)
       zoomed = false;
-      svg.transition().duration(1000).style("transform",null)
-      svg.select("#zoom").transition().duration(1000).style("opacity",null);
-      svg.select("#face-parts").style("display",null)
-      svg.select("#body-parts").style("display",null)
+      d3.select("#click-circle").style("pointer-events","all")
+      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(1)")
+      svg.select("#zoom").transition().duration(1000).style("opacity",1);
+      svg.classed("head-zoomed",false);
+      svg.classed("head-visible",false);
+      svg.classed("body-visible",true);
     }
 
   })
@@ -702,21 +781,19 @@ function bodyEvents(data){
   let face = svg.select("#click-circle").on("click",function(d){
     d3.event.stopPropagation();
     if(!zoomed){
-      d3.select(this).style("pointer-events","none")
       zoomed = true;
-      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3)")
+      d3.select(this).style("pointer-events","none")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
-      svg.select("#face-parts").style("display","block")
-      svg.select("#body-parts").style("display","none")
-      //svg.selectAll(".body-circle").transition().duration(1000).style("opacity",0);
+      svg.classed("head-zoomed",true);
+      svg.classed("head-visible",true);
+      svg.classed("body-visible",false);
+      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3)")
     }
     else {
-      d3.select(this).style("pointer-events",null)
       zoomed = false;
-      svg.transition().duration(1000).style("transform",null)
-      svg.select("#zoom").transition().duration(1000).style("opacity",null);
-      svg.select("#face-parts").style("display",null)
-      svg.select("#body-parts").style("display",null)
+      d3.select(this).style("pointer-events","all")
+      svg.select("#zoom").transition().duration(1000).style("opacity",1);
+      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(1)")
     }
   })
   .on("mouseover",function(d,i){

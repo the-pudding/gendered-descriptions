@@ -2,6 +2,8 @@ main
   background rgba(254, 239, 215, 0.28)
 
 
+
+
 /* CUSTOM STORY STYLE */
 .antialias
   transform translate3d(0,0,0)
@@ -22,7 +24,101 @@ main
 
 #body-graphic
   margin-bottom 3rem
+  .body-graphic-legend
+    display flex
+    margin-top 10px
+    justify-content center
+    .left, .right
+      display flex
+    .right
+      .circles
+        flex-direction row
+        margin-right 10px
+        margin-left 0
+        .circle
+          background #71D1D0
+          border 2px solid #378B89
+      .text-exp
+        text-align left
+        span
+          color #276766
+    .center-text
+      font-family $atlas
+      margin 0
+      align-self center
+      margin-left 10px
+      margin-right 10px
+      text-transform uppercase
+      font-family 500
+      color #887039
+      letter-spacing 1px
+      text-align center
+      font-size 12px
+      line-height 1.3
+
+    .text-exp
+      margin 0
+      font-family $atlas
+      font-size 10px
+      color #887039
+      max-width 90px
+      font-weight 500
+      line-height 1.3
+      text-align right
+      text-transform uppercase
+      letter-spacing .5px
+      span
+        font-family 'Walter Turncoat'
+        font-size 18px
+        color #8C512F
+        font-weight 600
+    .circles
+      display flex
+      flex-direction row-reverse
+      margin-left 10px
+
+      .circle
+        width 20px
+        height 20px
+        border-radius 50%
+        background #FFB587
+        border 2px solid #B3714A
+        align-self center
+        margin 2px
+        &:first-of-type
+          width 15px
+          height 15px
+          padding 0
+          margin 0
+        &:last-of-type
+          width 25px
+          height 25px
+          margin 0
+
   .story
+    .prose-wrapper
+      .w
+        background rgba(255, 181, 135, 0.38)
+        font-family 'Walter Turncoat'
+        padding-left 4px
+        padding-right 4px
+        color #613821
+        border-radius 3px
+        font-size 20px
+        text-transform lowercase
+      .m
+        background rgba(113, 209, 207, 0.29)
+        font-family 'Walter Turncoat'
+        padding-left 4px
+        padding-right 4px
+        color #276766
+        border-radius 3px
+        font-weight 400
+
+
+
+
+
     @media screen and (min-width: 900px)
       margin-top -50vh
       .prose-wrapper
@@ -42,9 +138,11 @@ main
       transform-origin 50% 0%
       flex-grow 1
       height 1px
-      transform translate3d(0,0,0) scale(1)
+      #zoom
+        opacity 0
       #click-circle
         cursor pointer
+        pointer-events none
       .tooltip
         pointer-events none
         display none
@@ -70,10 +168,15 @@ main
         pointer-events none
         user-select none
       #face-parts
-        display none
+        g:not(#face-labels)
+          display none
+          opacity 0
         path
           cursor pointer
       #body-parts
+        g
+          display none
+          opacity 0
         path
           cursor pointer
       #body_export
@@ -81,10 +184,42 @@ main
       #body-text
         text
           stroke-width 8px
+          stroke-opacity 1
       #face-labels
+        path
+          display none
+          opacity 0
+          transition opacity 1s
         text
+          display none
+          opacity 0
+          transition opacity 1s
           stroke-width 4px
-
+          stroke-opacity 1
+    .body-visible
+      #body-parts
+        g:not(#body-labels)
+          display block
+          opacity 1
+      #body-labels
+        path
+          display block
+          opacity 1
+        text
+          display block
+          opacity 1
+    .head-visible
+      #face-parts
+        g:not(#face-labels)
+          display block
+          opacity 1
+      #face-labels
+        path
+          display block
+          opacity 1
+        text
+          display block
+          opacity 1
 
 
 .part-selector
@@ -271,8 +406,25 @@ main
 .fairy-img
   max-width 700px
   margin-bottom 0
-.fairy-img-2
+
+.fairy-wrapper-2
   max-width 600px
+  margin 0 auto
+  position relative
+  svg
+    position absolute
+    top 0
+    left 0
+    width 100%
+    z-index 100
+    tspan
+      font-family 'Walter Turncoat'
+      opacity 0
+  .fairy-img-2
+    max-width 100%
+    position relative
+
+
 .parser-img
   max-width 600px
 .hermione-img
@@ -320,6 +472,8 @@ footer
         background #fff
         .prose
           font-size 18px
+          @media screen and (min-width: 900px)
+            font-size 22px
         p
           &:last-of-type
             margin-bottom 0
@@ -327,12 +481,15 @@ footer
     max-width 600px
     margin 0 auto
     .graphic-title-hed
-      font-size 30px
+      font-size 24px
       text-align center
+      letter-spacing 2px
       font-family 'Walter Turncoat'
-      font-weight 300
+      //font-family $lyon-hed
+      //font-weight 600
       color $text-black
       margin-bottom 0px
+      line-height 1.2
       //text-transform uppercase
       padding-top 1.5rem
       margin-top 0
