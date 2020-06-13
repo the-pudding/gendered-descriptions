@@ -49,7 +49,7 @@ function initDek(){
 function fairyScroll(){
   const scroller = scrollama();
   const fairySvg = d3.select("#fairy-2").select("svg");
-  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,3]);
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([-3,2]);
 
   scroller
     .setup({
