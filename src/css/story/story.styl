@@ -21,6 +21,16 @@ main
 #adj-graphic
   .graphic-title-dek
     max-width 600px
+  .graphic-title-hed
+    .part
+      text-transform capitalize
+      background: rgba(214, 183, 111, 0.31);
+      padding-left: 4px;
+      padding-right: 4px;
+      border-radius: 4px;
+  .story
+    .step
+      padding-bottom 100vh
 
 #body-graphic
   margin-bottom 3rem
@@ -226,10 +236,51 @@ main
 .part-selector
   display flex
   flex-wrap wrap
-  text-decoration underline
+  max-width 440px
+  margin 0 auto
+  margin-top 30px
+  justify-content center
+  position relative
+  &:before
+    content 'CHANGE BODY PART'
+    font-family $atlas
+    color #614f26
+    position absolute
+    left 0px
+    top -5px
+    right 0px
+    margin 0 auto
+    transform translate(0,-100%)
+    text-align center
+    width 100%
+    font-size 11px
+    letter-spacing 1px
+
+
+
   div
-    margin-right 5px
-    font-family 'Walter Turncoat'
+    font-family $atlas
+    color: #484848;
+    margin-left: 4px;
+    border-bottom: 2px solid #c5a457;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 500;
+    background: #f1e5c9;
+    letter-spacing: 1px;
+    padding: 4px;
+    border-radius: 3px;
+    margin-bottom 10px
+    user-select none
+    cursor pointer
+    &:hover
+      background white
+      color black
+      border-color black
+  .selected
+    color: black;
+    font-weight: 600;
+    border-color: #4c4125;
 
 .histogram
   display flex
@@ -261,7 +312,7 @@ main
   //width 90%
   //max-width 850px
   margin 0 auto
-  margin-top 100px
+  margin-top 60px
   &:before
     content ''
     width 100%
@@ -327,7 +378,7 @@ main
         text-transform uppercase
         letter-spacing 1px
         color rgba(0, 0, 0, .8)
-        colo #503423
+        color #8e5430
       height calc(100% - 110px)
 
     .first
@@ -388,7 +439,7 @@ main
     display flex
     align-items center
     color rbga(0,0,0,0)
-    //border-radius 50%
+    border-radius 4px
     //-webkit-font-smoothing auto
     font-family 'Walter Turncoat'
     z-index 1

@@ -100,6 +100,9 @@ function buildAdjChart(data){
   let width = d3.select("body").node().offsetWidth*.9;
   let height = 400;
 
+  let titlePart = d3.select("#adj-graphic").select(".graphic-title-hed").select(".part")
+  let titleVerb = d3.select("#adj-graphic").select(".graphic-title-hed").select(".verb")
+
   let container = d3.select(".chart");
 
   container.style("width",width+"px")
@@ -113,16 +116,63 @@ function buildAdjChart(data){
   let nestedMap = d3.map(nested,function(d){return d.key});
   let bodyParts = nested.map(function(d){return d.key});
 
-  d3.select(".part-selector").selectAll("div")
+  let bodyNameMap = {
+    "mouth":["mouths","are"],
+    "arm":["arms","are"],
+    "body":["bodies","are"],
+    "eye":["eyes","are"],
+    "finger":["fingers","are"],
+    "foot":["feet","are"],
+    "hand":["hands","are"],
+    "face":["faces","are"],
+    "head":["heads","are"],
+    "leg":["legs","are"],
+    "lip":["lips","are"],
+    "mouths":["mouths","are"],
+    "shoulder":["shoulders","are"],
+    "skin":["skin","is"],
+    "hair":["hair","is"]
+  }
+  let partSelected = "hair";
+
+  let partsButtons = d3.select(".part-selector").selectAll("div")
     .data(bodyParts).enter().append("div")
-    .text(function(d){ return d; })
+    .text(function(d){
+      if(Object.keys(bodyNameMap).indexOf(d) > -1){
+        return bodyNameMap[d][0];
+      }
+      return d;
+    })
+    .classed("selected",function(d){
+      console.log(d, partSelected);
+      if(d == partSelected){
+        return true;
+      }
+      return false;
+    })
     .on("click",function(d){
+      partSelected = d;
+      partsButtons.classed("selected",false);
+      d3.select(this).classed("selected",true);
       getNewData(d);
     })
     ;
 
+  function getBackgroundColor(d){
+    let color = d3.hsl(colorScaleInterpolate(colorScale(+d[varSelected])));
+    color.l = .96;
+    return color
+  }
+
+  function getColor(d){
+    return d3.color(colorScaleInterpolate(colorScale(+d[varSelected]))).darker(.2);
+  }
+
 
   function getNewData(bodyPart){
+
+    titlePart.text(bodyNameMap[bodyPart][0])
+    titleVerb.text(bodyNameMap[bodyPart][1])
 
     dataSelected = nestedMap.get(bodyPart).values;
     dataSelected = filterData(dataSelected);
@@ -142,7 +192,7 @@ function buildAdjChart(data){
         return radiusScale(+d.total)+"px";
       })
       .style("color",function(d){
-        return d3.color(getColor(+d[varSelected])).darker(.25);
+        return getColor(d);
       })
       .each(function(d){
         let bounds = d3.select(this).node().getBoundingClientRect();
@@ -156,9 +206,7 @@ function buildAdjChart(data){
         return d.height+"px";
       })
       .style("background-color",function(d){
-        let color = d3.hsl(getColor(+d[varSelected]));
-        color.l = .97;
-        return color//"rgba("+color.h+","+color.s+","+color.b+",.1)"
+        return getBackgroundColor(d);
       })
 
 
@@ -348,11 +396,7 @@ function buildAdjChart(data){
     });
   }
 
-  function getColor(value){
-    return colorScaleInterpolate(colorScale(value));
-  }
-
-  let dataSelected = nestedMap.get("hair").values;
+  let dataSelected = nestedMap.get(partSelected).values;
   dataSelected = filterData(dataSelected);
   let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
   let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([18,48]);
@@ -381,9 +425,6 @@ function buildAdjChart(data){
     .style("font-size",function(d){
       return radiusScale(+d.total)+"px";
     })
-    .style("color",function(d){
-      return d3.color(getColor(+d[varSelected])).darker(.25);
-    })
     .each(function(d){
       let bounds = d3.select(this).node().getBoundingClientRect();
       d.width = bounds.width;
@@ -396,9 +437,10 @@ function buildAdjChart(data){
       return d.height+"px";
     })
     .style("background-color",function(d){
-      let color = d3.hsl(getColor(+d[varSelected]));
-      color.l = .97;
-      return color//"rgba("+color.h+","+color.s+","+color.b+",.1)"
+      return getBackgroundColor(d);
+    })
+    .style("color",function(d){
+      return getColor(d);
     })
     ;
 
@@ -474,7 +516,7 @@ function buildHistogram(data){
     });
   }
 
-  let dataSelected = nestedMap.get("hair").values;
+  let dataSelected = nestedMap.get(partSelected).values;
   dataSelected = filterData(dataSelected);
 
   let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([10,24]);
