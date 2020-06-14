@@ -131,7 +131,8 @@ function buildAdjChart(data){
     "mouths":["mouths","are"],
     "shoulder":["shoulders","are"],
     "skin":["skin","is"],
-    "hair":["hair","is"]
+    "hair":["hair","is"],
+    "heart":["heart","is"]
   }
   let partSelected = "hair";
 
@@ -159,13 +160,22 @@ function buildAdjChart(data){
     ;
 
   function getBackgroundColor(d){
-    let color = d3.hsl(colorScaleInterpolate(colorScale(+d[varSelected])));
+    let color;
+    if(+d[varSelected] < 0){
+      color = d3.hsl(colorScaleInterpolateLeft(colorScaleLeft(+d[varSelected])));
+    }
+    else {
+      color = d3.hsl(colorScaleInterpolateRight(colorScaleRight(+d[varSelected])));
+    }
     color.l = .96;
     return color
   }
 
   function getColor(d){
-    return d3.color(colorScaleInterpolate(colorScale(+d[varSelected]))).darker(.2);
+    if(+d[varSelected] < 0){
+      return d3.color(colorScaleInterpolateLeft(colorScaleLeft(+d[varSelected]))).darker(.3);
+    }
+    return d3.color(colorScaleInterpolateRight(colorScaleRight(+d[varSelected]))).darker(.3);
   }
 
 
@@ -401,7 +411,10 @@ function buildAdjChart(data){
   let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
   let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([18,48]);
   let colorScale = d3.scaleLinear().domain([-1,0,1]).range([0,.5,1]).clamp(true);
-  let colorScaleInterpolate = d3.interpolateHcl("#FFA269","#4EC6C4");
+  let colorScaleLeft = d3.scaleLinear().domain([-1,0]).range([0,1]).clamp(true);
+  let colorScaleRight = d3.scaleLinear().domain([0,1]).range([0,1]).clamp(true);
+  let colorScaleInterpolateLeft = d3.interpolateHcl("#FFA269","#777")//"#4EC6C4");
+  let colorScaleInterpolateRight = d3.interpolateHcl("#777","#4EC6C4")//"#4EC6C4");
   let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([0,width]);
   x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
 
@@ -609,14 +622,27 @@ function initBodyScroller(){
       svg.classed("head-visible",true);
       svg.classed("body-visible",false);
       svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
-      svg.select("#hair").selectAll("path").style("stroke",null);
+      svg.select("#hair").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
     }
     else if(index == 1){
       zoomed = true;
       svg.classed("head-zoomed",true);
       svg.classed("head-visible",true);
       svg.classed("body-visible",false);
-      svg.select("#hair").selectAll("path").style("stroke","black");
+      svg.select("#hair").selectAll("path")
+        .classed("highlighted",function(d,i){
+          if(i==0){
+            return true;
+          }
+          return false;
+        })
+        .classed("highlighted-two",function(d,i){
+          if(i==1){
+            return true;
+          }
+          return false;
+        })
+        ;
       svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
       svg.select("#click-circle").style("pointer-events","none")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
@@ -627,29 +653,106 @@ function initBodyScroller(){
     }
     else if(index == 2){
       zoomed = false;
-      svg.select("#hair").selectAll("path").style("stroke",null);
+      svg.select("#hair").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
       svg.classed("head-zoomed",false);
       svg.classed("head-visible",false);
       svg.classed("body-visible",true);
       svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(1)")
       svg.select("#click-circle").style("pointer-events","all")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
-      svg.select("#nipple").selectAll("path").style("stroke","black");
-      svg.select("#hip").selectAll("path").style("stroke","black");
-      svg.select("#waist").selectAll("path").style("stroke","black");
-      svg.select("#thigh").selectAll("path").style("stroke","black");
-      svg.select("#chest").selectAll("path").style("stroke",null);
-      svg.select("#fist").selectAll("path").style("stroke",null);
-      svg.select("#knuckle").selectAll("path").style("stroke",null);
+      svg.select("#nipple").selectAll("path").classed("highlighted",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-two",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#hip").selectAll("path").classed("highlighted",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-two",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#waist").selectAll("path").classed("highlighted",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-two",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#thigh").selectAll("path").classed("highlighted",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-two",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#chest").selectAll("path").classed("highlighted-four",false).classed("highlighted-three",false);
+      svg.select("#fist").selectAll("path").classed("highlighted-four",false).classed("highlighted-three",false);
+      svg.select("#knuckle").selectAll("path").classed("highlighted-four",false).classed("highlighted-three",false);
     }
     else if(index == 3){
-      svg.select("#nipple").selectAll("path").style("stroke",null);
-      svg.select("#hip").selectAll("path").style("stroke",null);
-      svg.select("#waist").selectAll("path").style("stroke",null);
-      svg.select("#thigh").selectAll("path").style("stroke",null);
-      svg.select("#chest").selectAll("path").style("stroke","black");
-      svg.select("#fist").selectAll("path").style("stroke","black");
-      svg.select("#knuckle").selectAll("path").style("stroke","black");
+      svg.select("#nipple").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
+      svg.select("#hip").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
+      svg.select("#waist").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
+      svg.select("#thigh").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
+      svg.select("#chest").selectAll("path").classed("highlighted-three",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-four",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#fist").selectAll("path").classed("highlighted-three",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-four",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
+      svg.select("#knuckle").selectAll("path").classed("highlighted-three",function(d,i){
+        if(i==0){
+          return true;
+        }
+        return false;
+      })
+      .classed("highlighted-four",function(d,i){
+        if(i==1){
+          return true;
+        }
+        return false;
+      })
       svg.select("#click-circle").style("pointer-events","all")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
     }

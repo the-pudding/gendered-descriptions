@@ -1,8 +1,8 @@
 main
   background rgba(254, 239, 215, 0.28)
-
-
-
+  .section-header
+    font-size 38px
+    margin-top 6rem
 
 /* CUSTOM STORY STYLE */
 .antialias
@@ -184,18 +184,42 @@ main
           opacity 0
         path
           cursor pointer
+        .highlighted-two
+          stroke #9e3b00
+        .highlighted
+          fill-opacity 1
+          paint-order stroke
+          stroke #9e3b00
+          animation pulse 2s infinite
+          animation-timing-function ease-in-out
       #body-parts
         g
           display none
           opacity 0
         path
           cursor pointer
+        .highlighted-two
+          stroke #9e3b00
+        .highlighted
+          fill-opacity 1
+          paint-order stroke
+          stroke #9e3b00
+          animation pulse-two 2s infinite
+          animation-timing-function ease-in-out
+        .highlighted-four
+          stroke #419895
+        .highlighted-three
+          fill-opacity 1
+          paint-order stroke
+          stroke #419895
+          animation pulse-two 2s infinite
+          animation-timing-function ease-in-out
       #body_export
         transform-origin 0 64%
       #body-text
         text
           stroke-width 8px
-          stroke-opacity 1
+          stroke-opacity .7
       #face-labels
         path
           display none
@@ -206,7 +230,7 @@ main
           opacity 0
           transition opacity 1s
           stroke-width 4px
-          stroke-opacity 1
+          stroke-opacity .7
     .body-visible
       #body-parts
         g:not(#body-labels)
@@ -278,9 +302,9 @@ main
       color black
       border-color black
   .selected
-    color: black;
+    color black
     font-weight: 600;
-    border-color: #4c4125;
+    border-color #4c4125
 
 .histogram
   display flex
@@ -1121,4 +1145,15 @@ button.swiper-pagination-bullet {
   z-index: 0;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
+}
+
+
+@keyframes pulse {
+  from {stroke-width: 1px; stroke-opacity:.8;}
+  to {stroke-width: 30px; stroke-opacity:0;}
+}
+
+@keyframes pulse-two {
+  from {stroke-width: 3px; stroke-opacity:1;}
+  to {stroke-width: 60px; stroke-opacity:0;}
 }
