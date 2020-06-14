@@ -98,7 +98,13 @@ function initAdjScroller(){
 function buildAdjChart(data){
 
   let width = d3.select("body").node().offsetWidth*.9;
+  let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
   let height = 400;
+  let fontExtent = [18,48];
+  if(width < 600){
+    fontExtent = [12,24];
+    height = vh - 150;
+  }
 
   let titlePart = d3.select("#adj-graphic").select(".graphic-title-hed").select(".part")
   let titleVerb = d3.select("#adj-graphic").select(".graphic-title-hed").select(".verb")
@@ -409,7 +415,7 @@ function buildAdjChart(data){
   let dataSelected = nestedMap.get(partSelected).values;
   dataSelected = filterData(dataSelected);
   let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
-  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([18,48]);
+  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range(fontExtent);
   let colorScale = d3.scaleLinear().domain([-1,0,1]).range([0,.5,1]).clamp(true);
   let colorScaleLeft = d3.scaleLinear().domain([-1,0]).range([0,1]).clamp(true);
   let colorScaleRight = d3.scaleLinear().domain([0,1]).range([0,1]).clamp(true);
@@ -509,7 +515,6 @@ function buildAdjChart(data){
 }
 
 function buildHistogram(data){
-
 
   let container = d3.select(".chart");
 
@@ -816,12 +821,16 @@ function bodyEvents(data){
 
   })
 
+  let width = d3.select("body").node().offsetWidth;
+
+  let toolTipWidth = 350;
+
   let toolTip = svg.append("g")
     .attr("class","tooltip")
 
   let toolTipRect = toolTip.append("rect")
     .attr("class","tooltip-rect")
-    .attr("width",350)
+    .attr("width",toolTipWidth)
     .attr("height",150)
     .attr("rx",8)
     .attr("ry",8)
@@ -883,7 +892,20 @@ function bodyEvents(data){
 
       toolTip
         .style("display","block")
-        .attr("transform","translate("+centroid[0]+","+centroid[1]+") scale("+scale+")");
+        .attr("transform",function(){
+          let parentWidth = d3.select(this.parentNode).node().getBBox().width;
+          if(scale < 1){
+            return "translate("+(centroid[0] - toolTipWidth*scale/2)+","+centroid[1]+") scale("+scale+")";
+          }
+          if(centroid[0] < parentWidth/2){
+            return "translate("+(centroid[0])+","+centroid[1]+") scale("+scale+")";
+          }
+          // console.log(centroid[0],width);
+          // if(width < 600){
+          //
+          // }
+          return "translate("+(centroid[0] - toolTipWidth*scale)+","+centroid[1]+") scale("+scale+")";
+        });
 
       let suffix = "women";
       if(skew > 0){
