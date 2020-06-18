@@ -12,9 +12,114 @@ let zoomed = false;
 function resize() {}
 
 function initQuiz(){
-  d3.select(".quiz-images").selectAll(".swiper-slide").select("img").on("click",function(d){
-    quiz.slideNext();
-  })
+
+  const quizText = [
+    ["<span class=pos></span> bare legs, crossed, show the blue dabs of varicose veins.",0],
+    ["<span class=sub></span> paused and wrung <span class=pos></span> little hands.",0],
+    ["The skin of <span class=pos></span> naked shoulders appeared silver in the glow of lights through the windows.",0],
+    ["<span class=sub></span> panting tongue hangs out; <span class=pos></span> red lips are thick and fresh.",0],
+    ["<span class=sub></span> had an oval face, with rosy cheeks and lustrous skin.",0],
+    ["Erlend limped a bit from <span class=pos></span> wounded leg.",1],
+    ["<span class=pos></span> lower lip is split, and the blood has dried blackly.",1],
+    ["<span class=pos></span> huge hands clenched helplessly.",1],
+    ["<span class=pos></span> square face was flushed and ruddy.",1],
+    ["<span class=pos></span> head lolls back, tensing the muscles in <span class=pos></span> great thick neck.",1]
+  ]
+
+  let wordDict = {
+    "pos":["her","his"],
+    "sub":["she","he"]
+  }
+
+  let scored = {
+    0:false,
+    1:false,
+    2:false,
+    3:false,
+    4:false,
+    5:false,
+    6:false,
+    7:false,
+    8:false,
+    9:false
+  }
+
+  let score = {
+    0:null,
+    1:null,
+    2:null,
+    3:null,
+    4:null,
+    5:null,
+    6:null,
+    7:null,
+    8:null,
+    9:null
+  }
+
+  function calcScore(){
+    let answered = 0;
+    let correct = 0;
+    let keys = Object.keys(score);
+    for (var key in keys){
+      if(score[keys[key]] == 0 || score[keys[key]] == 1){
+        answered = answered + 1;
+      }
+      if(score[keys[key]] == 1){
+        correct = correct + 1;
+      }
+    }
+    d3.select(".score-output").text(correct+" out of "+answered+" correct")
+  }
+
+  d3.select(".quiz-images").selectAll(".swiper-slide")
+    .append("p")
+    .attr("class","quiz-text")
+    .html(function(d,i){
+      d3.select(this).datum(i);
+      return quizText[i][0]
+    })
+    .each(function(d,i){
+      d3.select(this).selectAll("span").each(function(d,i){
+        let word = d3.select(this).attr("class");
+
+        let buttons = d3.select(this).selectAll("div").data(wordDict[word]).enter().append("div").attr("class","option").text(function(d,i){
+          return d;
+        }).on("click",function(d,i){
+
+            let index = d3.select(this.parentNode.parentNode).datum();
+
+            if(!scored[index]){
+              scored[index] = true;
+              if(i == quizText[index][1]){
+                score[index] = 1
+              }
+              else {
+                score[index] = 0;
+              }
+            }
+
+
+            d3.select(this.parentNode).selectAll("div").classed("correct",function(d,i){
+              if(i == quizText[index][1]){
+                return true;
+              }
+              return false;
+            })
+            setTimeout(function(d){
+              quiz.slideNext();
+            },1000)
+
+            calcScore();
+
+        })
+      })
+    })
+
+    // d3.select(".quiz-images").selectAll(".swiper-slide")
+    // .select("img").on("click",function(d){
+    //   quiz.slideNext();
+    // })
 }
 
 function initDek(){
@@ -783,13 +888,13 @@ function initBodyScroller(){
 function init() {
   quiz = new Swiper('.swiper-container', {
     speed: 400,
-    spaceBetween: 100,
+    spaceBetween: 20,
     slidesPerView:"auto",
-    centeredSlides:true,
-    mousewheel:{
-      forceToAxis:true,
-      invert:true
-    }
+    centeredSlides:true
+    // mousewheel:{
+    //   forceToAxis:true,
+    //   invert:true
+    // }
   });
   initQuiz();
   initDek();

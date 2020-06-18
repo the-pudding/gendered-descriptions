@@ -576,6 +576,7 @@ footer
 .graphic-wrapper
   margin-top 3rem
   position relative
+
   .graphic
     position sticky
     top 0px
@@ -583,6 +584,7 @@ footer
     right 0px
     display flex
     flex-direction column
+    overflow hidden
 
 
     .story-img
@@ -689,8 +691,84 @@ footer
   .quiz-images
     margin-top 4rem
     margin-bottom 4rem
+    .score-output
+      font-family 'Walter Turncoat'
+      text-align center
+      margin-top 1.5rem
+      height 40px
+      font-weight 600
     .swiper-slide
-      width 400px
+      width calc(100% - 10px)
+      max-width 500px
+      &:first-of-type
+        span
+          &:first-of-type
+            position relative
+            &:before
+              position: absolute;
+              top: -5px;
+              left: 0;
+              right: 0;
+              margin: 0 auto;
+              content: 'choose one';
+              font-size: 11px;
+              color: #5a5a5a;
+              font-family: 'Atlas Grotesk Web';
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              @media (max-width: 500px)
+                font-size: 10px;
+                top -8px
+
+
+      .quiz-text
+        position absolute
+        font-family 'Walter Turncoat'
+        bottom 10%
+        left 0
+        right 0
+        font-size 24px
+        margin 0 auto
+        line-height 1
+        width 90%
+        text-align center
+        user-select none
+        @media (max-width: 500px)
+          font-size 19px
+          text-shadow 2px 2px 1px white, 0px 2px 1px white, 2px 0px 1px white, -2px 0px 1px white, -2px -2px 1px white, 0px -2px 1px white
+          line-height 1.5
+          bottom 20px
+
+
+
+
+        .option
+          padding: 2px 13px;
+          border-radius: 3px;
+          font-weight: 500;
+          font-size: 13px;
+          text-transform: uppercase;
+          font-family: 'Atlas Grotesk Web';
+          background: rgb(253, 245, 242);
+          box-shadow: rgba(15, 15, 15, 0.28) 0px 1px 2px, rgba(235, 87, 87, 0.3) 0px 0px 0px 1px inset;
+          color: rgb(235, 87, 87);
+          transform: translate3d(0px, 0px, 0px);
+          letter-spacing: 0px;
+          display inline-block
+          cursor pointer
+          transition all 300ms ease-in 0s
+          &:hover
+            background rgb(251, 235, 232)
+
+
+          &:first-of-type
+            margin-right 5px
+        .correct
+          box-shadow: rgba(15,15,15,0.28) 0px 1px 2px, rgba(87, 235, 139, 0.3) 0px 0px 0px 1px inset;
+          color: #2c7d02;
+          background: #f2fdf5;
+          &:hover
+            background #f2fdf5
       img
         width 100%
 
