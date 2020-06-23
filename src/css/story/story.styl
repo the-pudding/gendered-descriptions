@@ -20,6 +20,18 @@ main
   font-family $lyon-hed
 
 .title-wrapper
+  position relative
+  max-width 960px
+  margin 0 auto
+  @media only screen and (-webkit-min-device-pixel-ratio: 1)
+    max-width 1920px
+  @media only screen and (min--moz-device-pixel-ratio: 1)
+    max-width 1920px
+  @media only screen and (min-device-pixel-ratio: 1)
+    max-width 1920px
+  @media only screen and (-o-min-device-pixel-ratio: 1/1)
+    max-width 1920px
+
   svg
     position absolute
     width 100%
@@ -547,6 +559,29 @@ main
 .fairy-img
   max-width 700px
   margin-bottom 0
+
+.hermione-wrapper, .hermione-wrapper-text
+  max-width 600px
+  margin 0 auto
+  position relative
+  svg
+    position absolute
+    left 0
+    width 100%
+    z-index 100
+    tspan
+      font-family 'Walter Turncoat'
+  .hermione-img, .hermione-img-text
+    max-width 100%
+    position relative
+
+.hermione-wrapper-text
+  svg
+    position relative
+    left auto
+    width 100%
+    z-index 100
+
 
 .fairy-wrapper-2
   max-width 600px

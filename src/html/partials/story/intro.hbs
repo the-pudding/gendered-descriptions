@@ -19,8 +19,7 @@
 	{{/each}}
 	<div id="fairy-2" class="fairy-wrapper-2">
 		<img class="fairy-2-svg" inline src='fairy-2.svg'>
-		<img class="story-img fairy-img-2" src="assets/images/{{{doc.fairy_2}}}.png" alt="{{{doc.fairy_2Alt}}}">
-
+		<img class="story-img fairy-img-2" src="assets/images/fairy_2.png" alt="{{{doc.fairy_2Alt}}}">
 	</div>
 
 	{{#each doc.postFairy}}
@@ -121,12 +120,30 @@
 	{{#each doc.adj}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
-	<img class="story-img hermione-img" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}">
+
+	<div id="hermione" class="hermione-wrapper">
+		<img class="hermione-svg" inline src='hermione-1-1.svg'>
+		<img class="story-img hermione-img" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}">
+	</div>
+
+
 	<!-- <img class="story-img hermione-img antialias" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}"> -->
 	{{#each doc.adjPre}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
-	<img class="story-img hermione-img-2" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
+
+	<div id="hermione-text" class="hermione-wrapper-text">
+		<img class="hermione-text-svg" inline src='hermione-text.svg'>
+	</div>
+
+	<div id="hermione-2" class="hermione-wrapper-2">
+		<!-- <img class="hermione-2-svg" inline src='hermioneTwo.svg'> -->
+		<img class="story-img hermione-img-2" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
+	</div>
+
+
+
+
 	{{#each doc.adjPreChart}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
