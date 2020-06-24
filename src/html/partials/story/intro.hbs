@@ -25,7 +25,12 @@
 	{{#each doc.postFairy}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
-	<img class="story-img parser-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
+
+	<div id="parser" class="parser-wrapper">
+		<img class="parser-svg" inline src='parser-1-4.svg'>
+		<img class="story-img parser-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
+	</div>
+
 	{{#each doc.quiz}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
@@ -137,7 +142,7 @@
 	</div>
 
 	<div id="hermione-2" class="hermione-wrapper-2">
-		<!-- <img class="hermione-2-svg" inline src='hermioneTwo.svg'> -->
+		<img class="hermione-2-svg" inline src='hermione-2-2.svg'>
 		<img class="story-img hermione-img-2" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
 	</div>
 
