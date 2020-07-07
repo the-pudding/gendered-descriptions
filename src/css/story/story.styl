@@ -2,7 +2,7 @@ main
   background rgba(254, 239, 215, 0.28)
   .section-header
     font-size 38px
-    margin-top 6rem
+    margin-top 3rem
     @media screen and (max-width: 600px)
       font-size 26px
 
@@ -12,43 +12,91 @@ main
 .byline
   text-align center
   font-size 16px
+  margin-bottom 2rem
+
+.rough-annotation
+  path
+    &:last-of-type
+      stroke lighten(#a484f0, 20%)
+
+.post-quiz-text-wrapper
+  p
+    &:first-of-type
+      .rough-annotation
+        path
+          stroke #000
+          &:last-of-type
+            stroke #000
+  .rough-annotation
+    path
+      stroke #fff176
+      &:last-of-type
+        stroke #fff176
 
 .text-large
   text-align center
   font-size 36px
-  margin-top 7rem
+  margin 0 auto
+  margin-top 2rem
   font-family $lyon-hed
+  max-width 25rem
+  width 95%
+  line-height 1.3
 
 .title-wrapper
   position relative
   max-width 960px
   margin 0 auto
-  @media only screen and (-webkit-min-device-pixel-ratio: 1)
-    max-width 1920px
-  @media only screen and (min--moz-device-pixel-ratio: 1)
-    max-width 1920px
-  @media only screen and (min-device-pixel-ratio: 1)
-    max-width 1920px
-  @media only screen and (-o-min-device-pixel-ratio: 1/1)
-    max-width 1920px
+  .mobile-svg, .desktop-svg
+    position relative
+  .mobile-svg
+    display none
+  .desktop-svg
+    display block
+
+  @media screen and (orientation: portrait)
+    .mobile-svg
+      display block
+    .desktop-svg
+      display none
+    img
+      margin 0
+      width 100%
 
   svg
     position absolute
     width 100%
     top 0
     left 0
+    z-index 10000
     tspan
       font-family 'Walter Turncoat'
 #adj-graphic
   .graphic
     overflow hidden
+    display flex
+    flex-direction column
+    height 100vh
+    transform translate3d(0px, 0px, 0px)
+    @media (min-width: 700px)
+      overflow visible
+      margin-right 0
+      width 700px
+      margin-left auto
   .chart
-    @media screen and (max-width: 600px)
-      margin-top 50px
+    overflow scroll
+    flex-grow 1
+    height 1px
+    position relative
+    @media (min-width: 700px)
+      overflow visible
+      margin-top 40px
+    @media screen and (max-width: 700px)
+      margin-top 0px
   .graphic-title-dek
     max-width 600px
   .graphic-title-hed
-    @media screen and (max-width: 600px)
+    @media screen and (max-width: 700px)
       font-size 18px
     .part
       text-transform capitalize
@@ -59,9 +107,16 @@ main
   .story
     .step
       padding-bottom 100vh
+      .prose-wrapper
+        @media screen and (min-width: 700px)
+          margin 0
+          max-width 600px
+          width calc(100vw - 800px)
+          margin-left 50px
 
 #body-graphic
-  margin-bottom 3rem
+  margin-bottom 6rem
+  margin-top 0
   .body-graphic-legend
     display flex
     margin-top 10px
@@ -163,11 +218,6 @@ main
         color #276766
         border-radius 3px
         font-weight 400
-
-
-
-
-
     @media screen and (min-width: 900px)
       margin-top -50vh
       .prose-wrapper
@@ -300,6 +350,56 @@ main
     .step
       padding-bottom 100vh
 
+.author-filter
+  position absolute
+  bottom .5rem
+  left auto
+  right 0
+  margin 0 auto
+  display flex
+  font-family $atlas
+  @media (min-width: 700px)
+    right 0
+    left 0
+    justify-content flex-end
+  .author-filter-wrapper
+    display flex
+    align-self center
+    margin-left 6px
+    label
+      font-weight 500
+      font-size 12px
+      margin-right 5px
+      color #666
+      cursor pointer
+      text-shadow 1px 1px 1px #fefbf4, -1px -1px 1px #fefbf4, 0px 1px 1px #fefbf4, 1px 0px 1px #fefbf4, -1px 0px 1px #fefbf4, 0px -1px 1px #fefbf4, 2px 2px 1px #fefbf4, 0px 2px 1px #fefbf4, 2px 0px 1px #fefbf4, -2px 0px 1px #fefbf4, -2px -2px 1px #fefbf4, 0px -2px 1px #fefbf4
+      border-bottom 1px solid rgba(0,0,0,0)
+      letter-spacing 1px
+      text-transform uppercase
+      font-size 10px
+  p, label
+    margin 0
+    font-size 12px
+    align-self center
+  p
+    text-shadow 1px 1px 1px #fefbf4, -1px -1px 1px #fefbf4, 0px 1px 1px #fefbf4, 1px 0px 1px #fefbf4, -1px 0px 1px #fefbf4, 0px -1px 1px #fefbf4, 2px 2px 1px #fefbf4, 0px 2px 1px #fefbf4, 2px 0px 1px #fefbf4, -2px 0px 1px #fefbf4, -2px -2px 1px #fefbf4, 0px -2px 1px #fefbf4
+    color #614f26
+    letter-spacing 1px
+    text-transform uppercase
+    font-size 10px
+    font-weight 600
+  input[type=radio]
+    opacity 0
+    position absolute
+    margin 0
+    pointer-events none
+  input:checked + label
+    color black
+    border-bottom 1px solid black
+    font-weight 600
+
+
+
 .part-selector
   display flex
   flex-wrap wrap
@@ -322,7 +422,7 @@ main
     width 100%
     font-size 11px
     letter-spacing 1px
-  @media screen and (max-width: 600px)
+  @media screen and (max-width: 700px)
     width 100%
     max-width 100%
     flex-wrap nowrap
@@ -386,7 +486,6 @@ main
       color rbga(0,0,0,0)
       font-weight 500
       //border-radius 50%
-      padding 4px
       margin-top 2px
       font-family 'Walter Turncoat'
 .chart
@@ -404,6 +503,8 @@ main
     background #c7c7c7
     left 0px
     z-index 0
+    @media (min-width: 700px)
+      top calc(50% + 16px)
   .scales
     .one-scales, .two-scales
       position absolute
@@ -464,8 +565,10 @@ main
       height calc(100% - 110px)
 
     .first
+      height calc(100% - 111px)
       &:before
-        top -63px
+        top -76px
+
       &:after
         content 'more likely to be used in describing men'
         position absolute
@@ -481,16 +584,17 @@ main
         letter-spacing 1px
         color rgba(0, 0, 0, .8)
         color #2b6564
+        max-width 80px
     .first, .last
-      @media screen and (max-width: 600px)
-        height calc(100% - 180px)
+      @media screen and (max-width: 700px)
+        height calc(100% - 141px)
         &:after
           width 75px
           font-size 10px
         &:before
           top -75px
     .last
-      @media screen and (max-width: 600px)
+      @media screen and (max-width: 700px)
         &:after
           left 21px
 
@@ -499,7 +603,7 @@ main
 
     .mid
       width 0px
-      height 100%
+      height calc(100% - 86px)
       max-height 500px
       position absolute
       border-left 2px dashed #565656
@@ -522,7 +626,7 @@ main
         width 60px
         letter-spacing 1px
         color rgba(0, 0, 0, 0.72)
-      @media screen and (max-width: 600px)
+      @media screen and (max-width: 700px)
         border-left 2px dashed #999
         &:before
           font-size 11px
@@ -544,6 +648,10 @@ main
     //-webkit-font-smoothing auto
     font-family 'Walter Turncoat'
     z-index 1
+  .highlight
+    animation pulse-adj 2s infinite
+    animation-timing-function ease-in-out
+    z-index 1000000
 
 .story-img
   max-width 800px
@@ -553,14 +661,31 @@ main
   image-rendering -webkit-optimize-contrast
 
 .title-img
-  width 95%
-  max-width 2000px
+  width 100%
+  max-width 960px
   padding-top 1rem
 .fairy-img
-  max-width 700px
+  max-width 500px
   margin-bottom 0
+  margin-top 4rem
+  margin-bottom 3rem
 
-.hermione-wrapper, .hermione-wrapper-text, .hermione-wrapper-2, .parser-wrapper
+.text-highlight
+  position relative
+  margin-left 4px
+  margin-right 4px
+  padding-left 2px
+  padding-right 2px
+  svg
+    width 100%
+    position absolute
+    top 0
+    left 0
+    right 0
+    margin 0 auto
+    height auto
+
+.hermione-wrapper, .hermione-wrapper-text, .hermione-wrapper-2, .parser-wrapper, .end-wrapper
   max-width 600px
   margin 0 auto
   position relative
@@ -576,10 +701,10 @@ main
     max-width 100%
     position relative
 
-.parser-wrapper
+.parser-wrapper, .end-wrapper
   svg
     text, tspan
-      font-family 'Lyon Text Web'
+      font-family 'Lyon Display Web'
     #text758
       text, tspan
         font-family 'Walter Turncoat'
@@ -587,6 +712,7 @@ main
 
 .hermione-wrapper-2
   margin-bottom 0
+  max-width 450px
   img
     margin-bottom 0
 
@@ -614,14 +740,13 @@ main
   .fairy-img-2
     max-width 100%
     position relative
+    margin-top 3rem
 
 
 .parser-img
   max-width 600px
 .hermione-img
   max-width 600px
-.hermione-img-2
-  max-width 450px
 .end-img
   max-width 700px
 
@@ -757,6 +882,8 @@ footer
     .swiper-slide
       width calc(100% - 10px)
       max-width 500px
+      @media (max-width: 550px)
+        width calc(100% - 50px)
       &:first-of-type
         span
           &:first-of-type
@@ -775,7 +902,7 @@ footer
               letter-spacing: 1px;
               @media (max-width: 500px)
                 font-size: 10px;
-                top -8px
+                top -15px
 
 
       .quiz-text
@@ -1357,7 +1484,78 @@ button.swiper-pagination-bullet {
   to {stroke-width: 30px; stroke-opacity:0;}
 }
 
+@keyframes pulse-adj {
+  from {outline: 5px solid rgba(82,167,165,.4);}
+  to {outline: 25px solid rgba(82,167,165,0);}
+}
+
 @keyframes pulse-two {
   from {stroke-width: 3px; stroke-opacity:1;}
   to {stroke-width: 60px; stroke-opacity:0;}
 }
+
+.puff, .butterfly, .brush
+  height 35px
+
+
+
+.butterfly-image
+  &:before
+    position absolute
+    background-image url('assets/images/butterfly.png')
+    width 100%
+    height 30px
+    content ''
+    background-repeat no-repeat
+    margin 0 auto
+    left 0
+    right 0
+    width 90px
+    background-size contain
+
+.brush-image
+  &:before
+    position absolute
+    background-image url('assets/images/brush.png')
+    width 100%
+    height 50px
+    content ''
+    background-repeat no-repeat
+    margin 0 auto
+    left 0
+    right 0
+    width 150px
+    background-size contain
+
+.puff-image
+  &:before
+    position absolute
+    background-image url('assets/images/puff.png')
+    width 100%
+    height 50px
+    content ''
+    background-repeat no-repeat
+    margin 0 auto
+    left 0
+    right 0
+    width 150px
+    background-size contain
+
+
+.adj-larger
+  background rgba(66,66,66,0.1)
+  font-family 'Walter Turncoat'
+  padding-left 4px
+  padding-right 4px
+  color #333
+  border-radius 3px
+  font-weight 400
+
+.adj-highlight
+  background rgba(113,209,207,0.29)
+  font-family 'Walter Turncoat'
+  padding-left 4px
+  padding-right 4px
+  color #276766
+  border-radius 3px
+  font-weight 400

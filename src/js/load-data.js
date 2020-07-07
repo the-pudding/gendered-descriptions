@@ -1,7 +1,7 @@
 /* global d3 */
 /* usage
 	import loadData from './load-data'
-	
+
 	loadData('file.csv').then(result => {
 		console.log(result);
 	}).catch(console.error);
@@ -13,8 +13,16 @@
 
 function loadFile(file) {
   return new Promise((resolve, reject) => {
-    const ext = file.split('.').pop();
-    if (ext === 'csv')
+
+		const ext = file.split('.').pop().split("?")[0];
+		console.log(ext);
+    if(file.includes("https")){
+			console.log("here");
+      d3.json(file)
+        .then(resolve)
+        .catch(reject);
+    }
+    else if (ext === 'csv')
       d3.csv(`assets/data/${file}`)
         .then(resolve)
         .catch(reject);

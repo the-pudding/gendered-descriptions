@@ -3,13 +3,21 @@ import "intersection-observer";
 import scrollama from "scrollama";
 import loadData from './load-data'
 import rough from 'roughjs/bundled/rough.cjs';
+import db from './db';
+import { annotate } from 'rough-notation';
 
+const VERSION = Date.now();
+let dataURL = 'https://pudding.cool/2020/07/gendered-descriptions-data/data.json?version='+VERSION
+let adjGenderDataLoaded = false;
 let fairyTextFadedIn = false;
 let quiz = null;
 let removedWords = ["her","blond","of","be"]
 /* global d3 */
 let zoomed = false;
-function resize() {}
+let spaceBetween = 20;
+function resize() {
+  setupAnnotations();
+}
 
 function initQuiz(){
 
@@ -19,7 +27,7 @@ function initQuiz(){
     ["The skin of <span class=pos></span> naked shoulders appeared silver in the glow of lights through the windows.",0],
     ["<span class=sub></span> panting tongue hangs out; <span class=pos></span> red lips are thick and fresh.",0],
     ["<span class=sub></span> had an oval face, with rosy cheeks and lustrous skin.",0],
-    ["Erlend limped a bit from <span class=pos></span> wounded leg.",1],
+    ["<span class=sub></span> limped a bit from <span class=pos></span> wounded leg.",1],
     ["<span class=pos></span> lower lip is split, and the blood has dried blackly.",1],
     ["<span class=pos></span> huge hands clenched helplessly.",1],
     ["<span class=pos></span> square face was flushed and ruddy.",1],
@@ -69,6 +77,7 @@ function initQuiz(){
         correct = correct + 1;
       }
     }
+    db.update({"score":correct/answered});
     d3.select(".score-output").text(correct+" out of "+answered+" correct")
   }
 
@@ -93,9 +102,11 @@ function initQuiz(){
               scored[index] = true;
               if(i == quizText[index][1]){
                 score[index] = 1
+                // db.update({"card":index,"answer":1});
               }
               else {
                 score[index] = 0;
+                // db.update({"card":index,"answer":0});
               }
             }
 
@@ -200,24 +211,118 @@ function initAdjScroller(){
   window.addEventListener("resize", scroller.resize);
 }
 
+function filterData(data){
+  return data.filter(function(d){
+    d.shareF = +d.totalF / +d.total;
+    if(d.diff > 0){
+      d.logDiff = Math.log2(+d.diff);
+    }
+    else {
+      d.logDiff = Math.log2(Math.abs(+d.diff))*-1;
+    }
+    return removedWords.indexOf(d.adj) == -1
+  });
+}
+
 function buildAdjChart(data){
 
-  let width = d3.select("body").node().offsetWidth*.9;
+  let adjM = null;
+  let adjF = null;
+
+
+
+  function changeDataSet(dataSet){
+
+    dataSet = dataSet.filter(function(d){
+      return d.total > 50 || d.adj == "bushy";
+    });
+
+    nested = d3.nest().key(function(d){
+        return d.BodyPart;
+      })
+      .entries(dataSet)
+
+    nestedMap = d3.map(nested,function(d){return d.key});
+    bodyParts = nested.map(function(d){return d.key});
+    getNewData(partSelected);
+  }
+
+  function setupAuthorToggles(){
+    d3.select("#adj-graphic")
+      .select(".author-filter")
+      .selectAll('input')
+      .on('change', function (d) {
+
+        let value = d3.select(this).attr("value");
+        container.selectAll("p").remove();
+        if(!adjGenderDataLoaded){
+          adjGenderDataLoaded = true;
+          loadData(['adj_m.csv','adj_f.csv']).then(result => {
+            adjM = result[0];
+            adjF = result[1];
+
+            if(value == "men"){
+              changeDataSet(adjM)
+            }
+            else if (value == "women"){
+              changeDataSet(adjF)
+            }
+            else {
+              changeDataSet(data)
+            }
+          }).catch(console.error);
+        }
+        else {
+          if(value == "men"){
+            changeDataSet(adjM)
+          }
+          else if (value == "women"){
+            changeDataSet(adjF)
+          }
+          else {
+            changeDataSet(data)
+          }
+        }
+      });
+
+
+  }
+
+
+  let container = d3.select(".chart");
+  let width = Math.min(700,d3.select("body").node().offsetWidth);
+  let margin = 50;
+  if(d3.select("body").node().offsetWidth > 750){
+    margin = 50
+  }
   let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
   let height = 400;
-  let fontExtent = [18,48];
-  if(width < 600){
+
+  if(d3.select("body").node().offsetWidth > 700){
+    height = container.node().offsetHeight - 40;//Math.min(vh - 300,600);
+  }
+
+  let fontExtent = [16,36];
+  if(d3.select("body").node().offsetWidth < 900){
     fontExtent = [12,24];
+  }
+  if(d3.select("body").node().offsetWidth < 700){
     height = vh - 150;
   }
 
   let titlePart = d3.select("#adj-graphic").select(".graphic-title-hed").select(".part")
   let titleVerb = d3.select("#adj-graphic").select(".graphic-title-hed").select(".verb")
 
-  let container = d3.select(".chart");
+
 
   container.style("width",width+"px")
-  container.style("height",height+"px")
+  // container.style("height",height+"px")
+
+  console.log(data);
+
+  data = data.filter(function(d){
+    return d.total > 50 || d.adj == "bushy";
+  });
 
   let nested = d3.nest().key(function(d){
       return d.BodyPart;
@@ -225,7 +330,8 @@ function buildAdjChart(data){
     .entries(data)
 
   let nestedMap = d3.map(nested,function(d){return d.key});
-  let bodyParts = nested.map(function(d){return d.key});
+  let bodyParts = nested.map(function(d){return d.key})
+    .sort(function(x,y){ return x == "hair" ? -1 : y == "hair" ? 1 : 0; });
 
   let bodyNameMap = {
     "mouth":["mouths","are"],
@@ -248,7 +354,9 @@ function buildAdjChart(data){
   let partSelected = "hair";
 
   let partsButtons = d3.select(".part-selector").selectAll("div")
-    .data(bodyParts).enter().append("div")
+    .data(bodyParts)
+    .enter()
+    .append("div")
     .text(function(d){
       if(Object.keys(bodyNameMap).indexOf(d) > -1){
         return bodyNameMap[d][0];
@@ -256,7 +364,6 @@ function buildAdjChart(data){
       return d;
     })
     .classed("selected",function(d){
-      console.log(d, partSelected);
       if(d == partSelected){
         return true;
       }
@@ -289,7 +396,6 @@ function buildAdjChart(data){
     return d3.color(colorScaleInterpolateRight(colorScaleRight(+d[varSelected]))).darker(.3);
   }
 
-
   function getNewData(bodyPart){
 
     titlePart.text(bodyNameMap[bodyPart][0])
@@ -306,6 +412,12 @@ function buildAdjChart(data){
       .enter()
       .append("p")
       .attr("class","word")
+      .classed("highlight",function(d,i){
+        if(d.adj == "bushy"){
+          return true;
+        }
+        return false;
+      })
       .text(function(d){
         return d.adj;
       })
@@ -346,11 +458,7 @@ function buildAdjChart(data){
 
     words
       .style("left",function(d){
-        if(d.adj == "her"){
-          console.log(d);
-        }
         return d.x+"px"
-        //return d.x+"px";
       })
       .style("top",function(d){
         return d.y+"px";
@@ -374,8 +482,8 @@ function buildAdjChart(data){
       dataExtent[1] = 1.1;
     }
 
-
     x.domain(dataExtent).clamp(true);
+
     midScale.transition().duration(1000).delay(500)
       .style("left",x(0)+"px");
 
@@ -457,7 +565,6 @@ function buildAdjChart(data){
         return x(d)+"px"
       })
       .style("opacity",function(d,i){
-        console.log(dataExtent);
         if(dataExtent[0] > -4 && i == 0){
           return 0;
         }
@@ -504,19 +611,6 @@ function buildAdjChart(data){
 
   let varSelected = "logDiff";
 
-  function filterData(data){
-    return data.filter(function(d){
-      d.shareF = +d.totalF / +d.total;
-      if(d.diff > 0){
-        d.logDiff = Math.log2(+d.diff);
-      }
-      else {
-        d.logDiff = Math.log2(Math.abs(+d.diff))*-1;
-      }
-      return removedWords.indexOf(d.adj) == -1
-    });
-  }
-
   let dataSelected = nestedMap.get(partSelected).values;
   dataSelected = filterData(dataSelected);
   let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
@@ -526,7 +620,7 @@ function buildAdjChart(data){
   let colorScaleRight = d3.scaleLinear().domain([0,1]).range([0,1]).clamp(true);
   let colorScaleInterpolateLeft = d3.interpolateHcl("#FFA269","#777")//"#4EC6C4");
   let colorScaleInterpolateRight = d3.interpolateHcl("#777","#4EC6C4")//"#4EC6C4");
-  let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([0,width]);
+  let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([margin/2,width-margin/2]);
   x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
 
   let scales = container.append("div").attr("class","scales");
@@ -543,6 +637,12 @@ function buildAdjChart(data){
     .enter()
     .append("p")
     .attr("class","word")
+    .classed("highlight",function(d,i){
+      if(d.adj == "bushy"){
+        return true;
+      }
+      return false;
+    })
     .text(function(d){
       return d.adj;
     })
@@ -593,12 +693,6 @@ function buildAdjChart(data){
     )
   	.force("y", d3.forceY(height / 2))
     .force("collide", collide)
-    //.force("collide", collisionForce)
-  	// .force("collide", d3.forceCollide().radius(function(d){
-    //     return d.width/2;
-    //   })
-    //   .iterations(1)
-    // )
   	.stop()
   	;
 
@@ -607,49 +701,103 @@ function buildAdjChart(data){
 
   words
     .style("left",function(d){
-      if(d.adj == "her"){
-        console.log(d);
-      }
       return d.x+"px"
     })
     .style("top",function(d){
       return d.y+"px";
     })
 
+  setupAuthorToggles();
+
 
 }
 
 function buildHistogram(data){
+
+  function setScales(){
+    radiusScale.domain(d3.extent(dataSelected,function(d){ return +d.total }));
+    dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
+    if(dataExtent[0] < -4){
+      dataExtent[0] = -4;
+    }
+    if(dataExtent[1] > 4){
+      dataExtent[1] = 4;
+    }
+    if(dataExtent[0] > -1){
+      dataExtent[0] = -1.1;
+    }
+    if(dataExtent[1] < 1){
+      dataExtent[1] = 1.1;
+    }
+
+    x.domain(dataExtent).clamp(true);
+
+  }
+
+  let partSelected = "hair";
+
+  let width = d3.select("body").node().offsetWidth;
+  let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  let height = 400;
+  let fontExtent = [18,48];
+  if(width < 700){
+    fontExtent = [12,24];
+    height = vh - 150;
+  }
+  width = width * .9;
+
 
   let container = d3.select(".chart");
 
   let nested = d3.nest().key(function(d){
       return d.BodyPart;
     })
-    .entries(data)
+    .entries(data.filter(function(d){
+      return +d.total > 50;
+    }))
+
   let nestedMap = d3.map(nested,function(d){return d.key});
   let bodyParts = nested.map(function(d){return d.key});
 
-  let varSelected = "shareF";
-
-  function filterData(data){
-    return data.filter(function(d){
-      d.shareF = +d.totalF / +d.total;
-      return removedWords.indexOf(d.adj) == -1
-    });
-  }
+  let varSelected = "logDiff";
 
   let dataSelected = nestedMap.get(partSelected).values;
   dataSelected = filterData(dataSelected);
 
-  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range([10,24]);
-  let colorScale = d3.scaleLinear().domain([0,.5,1]).range(["blue","purple","red"]);
+  let dataExtent = d3.extent(dataSelected,function(d){ return +d[varSelected] });
+  let radiusScale = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d.total })).range(fontExtent);
+  let colorScale = d3.scaleLinear().domain([-1,0,1]).range([0,.5,1]).clamp(true);
+  let colorScaleLeft = d3.scaleLinear().domain([-1,0]).range([0,1]).clamp(true);
+  let colorScaleRight = d3.scaleLinear().domain([0,1]).range([0,1]).clamp(true);
+  let colorScaleInterpolateLeft = d3.interpolateHcl("#FFA269","#777")//"#4EC6C4");
+  let colorScaleInterpolateRight = d3.interpolateHcl("#777","#4EC6C4")//"#4EC6C4");
+  let x = d3.scaleLinear().domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).range([0,width]);
+  x.domain(d3.extent(dataSelected,function(d){ return +d[varSelected] })).clamp(true);
+
+  setScales();
 
   let buckets = 15;
   var histogramScale = d3.scaleQuantile().domain([0,1]).range(d3.range(buckets));
 
   var nestedHistogram = d3.nest().key(function(d){
-  		return histogramScale(1 - +d.shareF)
+
+
+
+
+      if(Math.abs(d.logDiff) < .5){
+        return 0
+      }
+      else if(d.logDiff < -4 && dataExtent[0]){
+        return -4;
+      }
+      else if(d.logDiff > 4 && dataExtent[0]){
+        return 4;
+      }
+
+      else {
+        return Math.round(d.logDiff);
+      }
+
   	})
   	.sortKeys(function(a,b){
   		return +a - +b;
@@ -659,6 +807,8 @@ function buildHistogram(data){
   	})
   	.entries(dataSelected)
   	;
+
+    console.log(nestedHistogram);
 
   let words = container
     .attr("class","histogram")
@@ -885,10 +1035,32 @@ function initBodyScroller(){
   window.addEventListener("resize", scroller.resize);
 
 }
+
+function setupAnnotations(){
+
+  d3.selectAll(".rough-annotation").remove();
+
+  const e = d3.select(".text-highlight").node();
+  const annotation = annotate(e, { padding:[0, 0, 0, 0], type: 'highlight', color: '#fff176', animate: false });
+  annotation.show();
+
+  const textUnderlines = d3.selectAll(".text-underline").each(function(d,i){
+    let element = d3.select(this).node();
+    annotate(element, { type: 'underline', color: '#a484f0', multiline: true, animate: false }).show();
+  });
+}
 function init() {
+  if(d3.select("body").classed("is-mobile")){
+    spaceBetween = 10;
+  }
+
+  d3.select(".score-avg").classed("text-underline",true);
+
+  setupAnnotations();
+
   quiz = new Swiper('.swiper-container', {
     speed: 400,
-    spaceBetween: 20,
+    spaceBetween: spaceBetween,
     slidesPerView:"auto",
     centeredSlides:true
     // mousewheel:{
@@ -902,12 +1074,54 @@ function init() {
   initAdjScroller();
   fairyScroll();
 
-	loadData(['adj_2.csv', 'parts.csv']).then(result => {
+
+  loadData([dataURL]).then(result => {
+    d3.select(".score-avg").text(Math.round(result[0].avg*100)+"%")
+  })
+  //
+  //
+	loadData(['adj_3.csv', 'parts4.csv']).then(result => {
     buildAdjChart(result[0]);
+  //   // buildHistogram(result[0]);
+  //
     // setupBodyImg(result[1])
+  //
     bodyEvents(result[1]);
+
+    setupDB();
+
+    d3.select(".puff").classed("puff-image",true);
+    d3.select(".butterfly").classed("butterfly-image",true);
+    d3.select(".brush").classed("brush-image",true);
+  //
 	}).catch(console.error);
 
+}
+
+
+
+function setupDB() {
+  db.setup();
+  // const answers = db.getAnswers();
+  // if(answers){
+  //   hasExistingData = true;
+  //
+  //   yearSelected = answers["year"];
+  //   genSelected = getGeneration(yearSelected);
+  //
+  //   d3.select(".new-user").style("display","none")
+  //   d3.select(".old-user").style("display","flex")
+  //   d3.selectAll(".old-bday").text(yearSelected);
+  //
+  //   answers["answers"].forEach(function(d){
+  //     dbOutput.push(d);
+  //     let songInfo = uniqueSongMap.get(d.key);
+  //     songOutput.push({"song_url":songInfo.song_url,"key":d.key,"artist":songInfo.artist,"title":songInfo.title,"text":answersKey[d.answer].text,"answer":d.answer,"year":songInfo.year})
+  //   })
+  //   //remove this when staging live
+  //   // quizOutput();
+  //   // updateOnCompletion();
+  // }
 }
 
 function bodyEvents(data){
@@ -977,6 +1191,7 @@ function bodyEvents(data){
       let skew = bodyData.skew;
 
       d3.select(el.parentNode).datum(function(){
+
         return {"oddsRatio":bodyData.pctF/bodyData.pctM,"centroid": centroid, "bodyPart":part};
       })
 
@@ -1005,10 +1220,6 @@ function bodyEvents(data){
           if(centroid[0] < parentWidth/2){
             return "translate("+(centroid[0])+","+centroid[1]+") scale("+scale+")";
           }
-          // console.log(centroid[0],width);
-          // if(width < 600){
-          //
-          // }
           return "translate("+(centroid[0] - toolTipWidth*scale)+","+centroid[1]+") scale("+scale+")";
         });
 
@@ -1153,14 +1364,26 @@ function setupBodyImg(data){
   let colorScale = d3.scaleThreshold().domain([extent[0],0,extent[1]]).range(["#FFA269","#4EC6C4","#4EC6C4"]);
   let colorScaleInterpolate = d3.interpolateRgb("#4EC6C4","#FFA269");
 
+  let dots2 = svg.select("#parts").selectAll("path").datum(function(d){
+    let part = d3.select(this).attr("id");
+    if(!bodyPartMap.has(part)){
+      console.log(part);
+    }
+
+
+  })
+
+
   let dots = svg.select("#parts").selectAll("path").attr("fill","none").attr("stroke","none").datum(function(d){
 
     let part = d3.select(this).attr("id");
 
     let bodyData = bodyPartMap.get(part);
+
     let centroid = getCentroid(d3.select(this).node())
     return {"oddsRatio":bodyData.pctF/bodyData.pctM,"centroid": centroid, "bodyPart":part,"skew":bodyData.skew};
   })
+
   .each(function(d){
 
     let centroid = d.centroid;

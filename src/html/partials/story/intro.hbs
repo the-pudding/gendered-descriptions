@@ -1,25 +1,68 @@
 <section>
 	<div class="title-wrapper">
-		<svg xmlns:x="http://ns.adobe.com/Extensibility/1.0/" xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/" xmlns:graph="http://ns.adobe.com/Graphs/1.0/" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 1920 1080" enable-background="new 0 0 1920 1080" xml:space="preserve">
-			<g id="SUBTITLE_2">
-					<path fill="#FAFAFA" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="     M557.111,853.575c0,0,25.498,1.499,61.497-3s112.495,2.999,131.994-1.5s190.489-2.999,226.488-4.499s241.488-4.5,275.986-4.5     s134.993,0,134.993,0s7.5-4.83,7.5,8.999c0,26.999,14.999,149.993,14.999,149.993s-137.993,11.999-155.992,16.499     s-193.49,58.497-193.49,58.497l-50.997-17.999c9.127-0.715,11.625-19.086,11.245-20.732c-4.499-19.499-12.745-7.767-12.745-7.767     s1.821-47.3-35.255-40.232c-34.491,6.574-32.765,26.401-33.742,38.732c-0.259,3.267-13.592-2.733-12,28.499     c0,0-193.49-6-224.989-1.5c-19.499,1.5-146.993-38.998-167.992-35.998c0,0,3-32.998,13.5-91.495S557.111,853.575,557.111,853.575     z"/>
-				<text transform="matrix(0.9998 -0.0194 0.0194 0.9998 615.3364 908.7334)"><tspan x="0" y="0" fill="#1C1143" font-family="'WalterTurncoat-Regular'" font-size="45.9999">The physical traits  that define</tspan><tspan x="54.917" y="55.201" fill="#1C1143" font-family="'WalterTurncoat-Regular'" font-size="45.9999">men &amp; women in literature</tspan></text>
-			</g>
-	  </svg>
-		<img class="story-img title-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}">
+		<div class="mobile-svg">
+			<img class="title-svg" inline src='title-svg-mobile-2.svg'>
+		</div>
+		<div class="desktop-svg">
+			<img class="title-svg" inline src='title-svg-4.svg'>
+		</div>
+
+
+
+		<picture>
+		   <source
+			 		media="(orientation: landscape)"
+		      srcset="assets/images/title_1920.png 1920w, assets/images/title_1000.png 1200w, assets/images/title_750.png 750w, assets/images/title_500.png 500w"
+		      sizes="(max-width: 960px) 100vw, 960px"
+			 />
+
+			 <source
+	         media="(orientation: portrait)"
+	         srcset="assets/images/title_mobile_1500.png 1500w, assets/images/title_mobile_1000.png 1000w, assets/images/title_mobile_750.png 750w, assets/images/title_mobile_500.png 500w"
+	         sizes="100vw">
+		   <img class="story-img title-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}">
+		</picture>
+
+
+
+		<!-- <img class="story-img title-img" src="assets/images/title-mobile-2.png" alt="{{{doc.titleImgAlt}}}"> -->
+		<!-- <img class="story-img title-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}"> -->
 	</div>
 
 	<div class="byline">
 		<p>by <a href="#">Erin Davis</a>. Illustrations by <a href="#">Liana Sposto</a> </p>
 	</div>
+	<div class="butterfly">
+
+	</div>
 	<p class="text-large">{{{doc.fairyAlt}}}</p>
-	<img class="story-img fairy-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
+
+	<picture>
+		 <source
+				 srcset="assets/images/fairy_1920.png 1920w, assets/images/fairy_1200.png 1200w, assets/images/fairy_750.png 750w, assets/images/fairy_500.png 500w"
+				 sizes="(max-width: 500px) 500px, 100vw"
+		 >
+		 <img class="story-img fairy-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
+	</picture>
 	{{#each doc.introText}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
 	<div id="fairy-2" class="fairy-wrapper-2">
+
+
+
+
 		<img class="fairy-2-svg" inline src='fairy-2.svg'>
-		<img class="story-img fairy-img-2" src="assets/images/fairy_2.png" alt="{{{doc.fairy_2Alt}}}">
+
+		<picture>
+			 <source
+					 srcset="assets/images/fairy_2_1200.png 1200w, assets/images/fairy_2_900.png 900w, assets/images/fairy_2_700.png 700w, assets/images/fairy_2_400.png 400w"
+					 sizes="(max-width: 600px) 600px, 100vw"
+			 >
+			 <img class="story-img fairy-img-2" src="assets/images/fairy_2.png" alt="{{{doc.fairy_2Alt}}}">
+		</picture>
+
+
 	</div>
 
 	{{#each doc.postFairy}}
@@ -28,7 +71,14 @@
 
 	<div id="parser" class="parser-wrapper">
 		<img class="parser-svg" inline src='parser-1-4.svg'>
-		<img class="story-img parser-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
+		<picture>
+			 <source
+					 srcset="assets/images/parser_1200.png 1200w, assets/images/parser_900.png 900w, assets/images/parser_700.png 700w, assets/images/parser_400.png 400w"
+					 sizes="(max-width: 600px) 600px, 100vw"
+			 >
+			 <img class="story-img parser-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
+		</picture>
+
 	</div>
 
 	{{#each doc.quiz}}
@@ -80,10 +130,17 @@
 
 		</div>
 	</div>
-
-	{{#each doc.postQuiz}}
-		<p class='prose'>{{{value}}}</p>
+	<div class="post-quiz-text-wrapper">
+	{{#each doc.postQuiz}}		
+		<p class='prose post-quiz-text'>{{{value}}}</p>
 	{{/each}}
+	</div>
+
+
+	<div class="puff">
+
+	</div>
+
 	<div id="body-graphic" class="graphic-wrapper">
 		<div class="graphic">
 			<div class="graphic-title">
@@ -108,7 +165,19 @@
 					</div>
 				</div>
 			</div>
+			<!-- <img class="body-img head-zoomed" inline src='body_export16-9.svg'> -->
 			<img class="body-img head-zoomed" inline src='body_22.svg'>
+			<div class="author-filter">
+				<p>Authors:</p>
+				<div class="author-filter-wrapper">
+					<input id='body-author-all' type='radio' name='body-author' value='all' checked>
+          <label for='body-author-all'>All</label>
+					<input id='body-author-male' type='radio' name='body-author' value='men'>
+          <label for='body-author-male'>Men</label>
+          <input id='body-author-female' type='radio' name='body-author' value='women'>
+          <label for='body-author-female'>Women</label>
+				</div>
+			</div>
 		</div>
 		<div class="story">
 			{{#each doc.bodyScroller}}
@@ -122,13 +191,26 @@
 			{{/each}}
 		</div>
 	</div>
+	<div class="brush">
+
+	</div>
+
 	{{#each doc.adj}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
 
 	<div id="hermione" class="hermione-wrapper">
-		<img class="hermione-svg" inline src='hermione-1-1.svg'>
-		<img class="story-img hermione-img" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}">
+		<img class="hermione-svg" inline src='hermione-1-3.svg'>
+
+		<picture>
+			 <source
+					 srcset="assets/images/hermione_1200.png 1200w, assets/images/hermione_900.png 900w, assets/images/hermione_700.png 700w, assets/images/hermione_400.png 400w"
+					 sizes="(max-width: 600px) 600px, 100vw"
+			 >
+			 <img class="story-img hermione-img" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}">
+		</picture>
+
+
 	</div>
 
 
@@ -143,7 +225,18 @@
 
 	<div id="hermione-2" class="hermione-wrapper-2">
 		<img class="hermione-2-svg" inline src='hermione-2-2.svg'>
-		<img class="story-img hermione-img-2" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
+
+		<picture>
+			<source
+				 srcset="assets/images/hermione_2_1200.png 1200w, assets/images/hermione_2_900.png 900w, assets/images/hermione_2_700.png 700w, assets/images/hermione_2_400.png 400w"
+				 sizes="(max-width: 450px) 450px, 100vw"
+		 	 >
+			 <img class="story-img hermione-img-2" src="assets/images/{{{doc.hermioneImgTwo}}}.png" alt="{{{doc.hermioneImgTwoAlt}}}">
+		</picture>
+
+
+
+
 	</div>
 
 
@@ -162,6 +255,17 @@
 			</div>
 			<div class="chart">
 			</div>
+			<div class="author-filter">
+				<p>Authors:</p>
+				<div class="author-filter-wrapper">
+					<input id='adj-author-all' type='radio' name='adj-author' value='all' checked>
+          <label for='adj-author-all'>All</label>
+					<input id='adj-author-male' type='radio' name='adj-author' value='men'>
+          <label for='adj-author-male'>Men</label>
+          <input id='adj-author-female' type='radio' name='adj-author' value='women'>
+          <label for='adj-author-female'>Women</label>
+				</div>
+			</div>
 		</div>
 		<div class="story">
 			{{#each doc.adjScroller}}
@@ -178,6 +282,22 @@
 	{{#each doc.conclusion}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
-	<img class="story-img end-img" src="assets/images/{{{doc.endImg}}}.png" alt="">
+	<div id="end" class="end-wrapper">
+		<img class="end-2-svg" inline src='end-1.svg'>
+
+		<picture>
+			<source
+					srcset="assets/images/end_1400.png 1400w, assets/images/end_1000.png 1000w, assets/images/end_700.png 700w, assets/images/end_500.png 500w"
+					sizes="(max-width: 700px) 700px, 100vw"
+			>
+			<img class="story-img end-img" src="assets/images/{{{doc.endImg}}}.png" alt="">
+		</picture>
+
+
+
+
+	</div>
+
+
 
 </section>
