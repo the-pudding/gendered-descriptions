@@ -494,6 +494,15 @@ function buildAdjChart(data){
       .classed("first",function(d){
         return getFirst(d);
       })
+      .style("display",function(d,i){
+        if(dataExtent[0] > -1 && i == 0){
+          return "none";
+        }
+        if(dataExtent[1] < 1 && i == 1){
+          return "none";
+        }
+        return null;
+      })
       .transition().duration(1000).delay(500)
       .style("left",function(d){
         return x(d)+"px"
@@ -515,6 +524,15 @@ function buildAdjChart(data){
       })
       .classed("first",function(d){
         return getFirst(d);
+      })
+      .style("display",function(d,i){
+        if(dataExtent[0] > -2 && i == 0){
+          return "none";
+        }
+        if(dataExtent[1] < 2 && i == 1){
+          return "none";
+        }
+        return null;
       })
       .transition().duration(1000).delay(500)
       .style("left",function(d){
@@ -538,6 +556,15 @@ function buildAdjChart(data){
       .classed("first",function(d){
         return getFirst(d);
       })
+      .style("display",function(d,i){
+        if(dataExtent[0] > -3 && i == 0){
+          return "none";
+        }
+        if(dataExtent[1] < 3 && i == 1){
+          return "none";
+        }
+        return null;
+      })
       .transition().duration(1000).delay(500)
       .style("left",function(d){
         return x(d)+"px"
@@ -559,6 +586,15 @@ function buildAdjChart(data){
       })
       .classed("first",function(d){
         return getFirst(d);
+      })
+      .style("display",function(d,i){
+        if(dataExtent[0] > -4 && i == 0){
+          return "none";
+        }
+        if(dataExtent[1] < 4 && i == 1){
+          return "none";
+        }
+        return null;
       })
       .transition().duration(1000).delay(500)
       .style("left",function(d){
@@ -1082,10 +1118,10 @@ function init() {
   //
 	loadData(['adj_3.csv', 'parts4.csv']).then(result => {
     buildAdjChart(result[0]);
-  //   // buildHistogram(result[0]);
-  //
+  // buildHistogram(result[0]);
+
     // setupBodyImg(result[1])
-  //
+
     bodyEvents(result[1]);
 
     setupDB();
