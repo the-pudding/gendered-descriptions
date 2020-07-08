@@ -9,6 +9,7 @@ import { annotate } from 'rough-notation';
 const VERSION = Date.now();
 let dataURL = 'https://pudding.cool/2020/07/gendered-descriptions-data/data.json?version='+VERSION
 let adjGenderDataLoaded = false;
+let bodyGenderDataLoaded = false;
 let fairyTextFadedIn = false;
 let quiz = null;
 let removedWords = ["her","blond","of","be"]
@@ -911,7 +912,7 @@ function buildHistogram(data){
 
 function initBodyScroller(){
   const scroller = scrollama();
-  let svg = d3.select(".body-img");
+  let svg = d3.selectAll(".body-img");
 
   function stepEnter(response){
     let index = response.index;
@@ -1092,11 +1093,11 @@ function init() {
   if(d3.select("body").classed("is-mobile")){
     spaceBetween = 10;
   }
-
+  //
   d3.select(".score-avg").classed("text-underline",true);
-
+  //
   setupAnnotations();
-
+  //
   quiz = new Swiper('.swiper-container', {
     speed: 400,
     spaceBetween: spaceBetween,
@@ -1112,14 +1113,14 @@ function init() {
   initBodyScroller();
   initAdjScroller();
   fairyScroll();
-
-
+  //
+  //
   loadData([dataURL]).then(result => {
     d3.select(".score-avg").text(Math.round(result[0].avg*100)+"%")
   })
-  //
-  //
-	loadData(['adj_3.csv', 'parts4.csv']).then(result => {
+  // //
+  // //
+	loadData(['adj_3.csv', 'parts5.csv']).then(result => {
     buildAdjChart(result[0]);
   // buildHistogram(result[0]);
 
@@ -1128,7 +1129,7 @@ function init() {
     bodyEvents(result[1]);
 
     setupDB();
-
+    //
     d3.select(".puff").classed("puff-image",true);
     d3.select(".butterfly").classed("butterfly-image",true);
     d3.select(".brush").classed("brush-image",true);
@@ -1164,9 +1165,85 @@ function setupDB() {
 }
 
 function bodyEvents(data){
+
+  let partsM = null;
+  let partsF = null;
+  let bodies = d3.selectAll(".body-img");
+
+
+  function changeDataSet(dataSet,value){
+    bodyPartMap = d3.map(dataSet,function(d){ return d.BodyPart; });
+    bodies.classed("body-hidden",function(d){
+      let id = d3.select(this).attr("id");
+      if(value == "men"){
+        if(id == "men-parts"){
+          return false;
+        }
+        return true;
+      }
+      else if(value == "women"){
+        if(id == "women-parts"){
+          return false;
+        }
+        return true;
+      }
+      else if(value == "all"){
+        if(id == "all-parts"){
+          return false;
+        }
+        return true;
+      }
+    })
+  }
+
+  function setupAuthorToggles(){
+
+
+    d3.select("#body-graphic")
+      .select(".author-filter")
+      .selectAll('input')
+      .on('change', function (d) {
+
+        let value = d3.select(this).attr("value");
+
+        if(!bodyGenderDataLoaded){
+          bodyGenderDataLoaded = true;
+          loadData(['partsM_2.csv','partsF_2.csv']).then(result => {
+            partsM = result[0];
+            partsF = result[1];
+
+            if(value == "men"){
+              changeDataSet(partsM,value)
+
+            }
+            else if (value == "women"){
+              changeDataSet(partsF,value)
+            }
+            else {
+              changeDataSet(data,value)
+            }
+          }).catch(console.error);
+        }
+        else {
+          if(value == "men"){
+            changeDataSet(partsM,value)
+          }
+          else if (value == "women"){
+            changeDataSet(partsF,value)
+          }
+          else {
+            changeDataSet(data,value)
+          }
+        }
+      });
+
+
+  }
+
+
   let bodyPartMap = d3.map(data,function(d){ return d.BodyPart; });
 
-  let svg = d3.select(".body-img").on("click",function(){
+  let svg = d3.selectAll(".body-img").on("click",function(){
     if(zoomed){
       zoomed = false;
       d3.select("#click-circle").style("pointer-events","all")
@@ -1285,7 +1362,6 @@ function bodyEvents(data){
         .style("display","none");
     })
 
-
   d3.selectAll("#face-parts").selectAll("path")
     .on("mouseover",function(){
       mouseover(this,"face");
@@ -1328,6 +1404,8 @@ function bodyEvents(data){
   .on("mouseout",function(d,i){
     svg.select("#zoom").select("g").selectAll("path").style("fill",null);
   })
+
+  setupAuthorToggles();
 }
 
 function setupBodyImg(data){

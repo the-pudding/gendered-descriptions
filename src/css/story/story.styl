@@ -230,6 +230,8 @@ main
         margin-left 100px
   .graphic
     height 100vh
+    .body-hidden
+      display none
     @media screen and (min-width: 900px)
       right auto
       margin 0
@@ -314,11 +316,14 @@ main
         text
           stroke-width 8px
           stroke-opacity .7
+        path
+          pointer-events none
       #face-labels
         path
           display none
           opacity 0
           transition opacity 1s
+          pointer-events none
         text
           display none
           opacity 0
@@ -361,6 +366,8 @@ main
   margin 0 auto
   display flex
   font-family $atlas
+  width 200px
+  margin-right 0
   @media (min-width: 700px)
     right 0
     left 0
