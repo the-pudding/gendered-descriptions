@@ -301,6 +301,9 @@ function buildAdjChart(data){
   if(d3.select("body").node().offsetWidth > 700){
     height = container.node().offsetHeight - 40;//Math.min(vh - 300,600);
   }
+  else {
+    height = container.node().offsetHeight - 150;//Math.min(vh - 300,600);
+  }
 
   let fontExtent = [16,36];
   if(d3.select("body").node().offsetWidth < 900){

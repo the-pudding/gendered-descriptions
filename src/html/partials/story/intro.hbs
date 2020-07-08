@@ -1,4 +1,5 @@
 <section>
+	<p class="logo-wrapper">A project from the <a class="text-underline" href="/">The Pudding</a></p>
 	<div class="title-wrapper">
 		<div class="mobile-svg">
 			<img class="title-svg" inline src='title-svg-mobile-2.svg'>
@@ -12,7 +13,7 @@
 		<picture>
 		   <source
 			 		media="(orientation: landscape)"
-		      srcset="assets/images/title_1920.png 1920w, assets/images/title_1000.png 1200w, assets/images/title_750.png 750w, assets/images/title_500.png 500w"
+		      srcset="assets/images/title_1920.png 1920w, assets/images/title_1200.png 1200w, assets/images/title_750.png 750w, assets/images/title_500.png 500w"
 		      sizes="(max-width: 960px) 100vw, 960px"
 			 />
 
@@ -30,7 +31,7 @@
 	</div>
 
 	<div class="byline">
-		<p>by <a href="#">Erin Davis</a>. Illustrations by <a href="#">Liana Sposto</a> </p>
+		<p>by <a href="https://pudding.cool/author/erin-davis/">Erin Davis</a>. Illustrations by <a href="https://pudding.cool/author/liana-sposto/">Liana Sposto</a> </p>
 	</div>
 	<div class="butterfly">
 
@@ -131,7 +132,7 @@
 		</div>
 	</div>
 	<div class="post-quiz-text-wrapper">
-	{{#each doc.postQuiz}}		
+	{{#each doc.postQuiz}}
 		<p class='prose post-quiz-text'>{{{value}}}</p>
 	{{/each}}
 	</div>

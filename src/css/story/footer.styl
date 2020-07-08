@@ -1,16 +1,21 @@
 footer.pudding-footer
-	padding 3rem 1rem
+	padding 0 1rem
 	border-top 4px solid $black
-	font-family $sans
+	font-family $lyon
 	margin-top 3rem
+	padding-bottom 3rem
 
 	.footer-recirc
 		max-width 65rem
 		margin 0 auto
+		p
+			text-align center
+			font-size 18px
 		&__articles
 			display flex
 			flex-wrap wrap
 			justify-content space-between
+			margin-top 3rem
 
 		&__article
 			display block
@@ -24,10 +29,11 @@ footer.pudding-footer
 					margin-right 0
 
 		.article__headline
-			font-family $sans-display
-			set-type-size(large, false)
-			line-height 1
-			font-weight 700
+			font-family $atlas
+			set-type-size(small, false)
+			color rgba(0,0,0,.85)
+			line-height 1.5
+			font-weight 500
 			padding-left 0.5rem
 			// padding-top 1rem
 
@@ -37,7 +43,7 @@ footer.pudding-footer
 		max-width 65rem
 		display flex
 		flex-direction column
-		font-family $sans-display
+		font-family $lyon
 		+mq('bp-5')
 			flex-direction row
 
@@ -70,7 +76,7 @@ footer.pudding-footer
 					border none
 
 				p
-					font-family $sans-display
+					font-family $lyon
 					margin 0
 					padding-left 0.5rem
 					padding-top 0.1rem
