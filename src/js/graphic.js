@@ -921,7 +921,9 @@ function initBodyScroller(){
       svg.classed("head-zoomed",true);
       svg.classed("head-visible",true);
       svg.classed("body-visible",false);
-      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
+      svg
+        //.transition().duration(1000)
+        .style("transform","translate3d(0,0,0) scale(3,3)")
       svg.select("#hair").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
     }
     else if(index == 1){
@@ -943,7 +945,9 @@ function initBodyScroller(){
           return false;
         })
         ;
-      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(3)")
+      svg
+        //.transition().duration(1000)
+        .style("transform","translate3d(0,0,0) scale(3,3)")
       svg.select("#click-circle").style("pointer-events","none")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
       svg.select("#nipple").selectAll("path").style("stroke",null);
@@ -957,7 +961,9 @@ function initBodyScroller(){
       svg.classed("head-zoomed",false);
       svg.classed("head-visible",false);
       svg.classed("body-visible",true);
-      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(1)")
+      svg
+        //.transition().duration(1000)
+        .style("transform","translate3d(0,0,0) scale(1,1)")
       svg.select("#click-circle").style("pointer-events","all")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
       svg.select("#nipple").selectAll("path").classed("highlighted",function(d,i){
@@ -1120,7 +1126,7 @@ function init() {
   })
   // //
   // //
-	loadData(['adj_3.csv', 'parts5.csv']).then(result => {
+	loadData(['adj_3.csv', 'parts5_1.csv']).then(result => {
     buildAdjChart(result[0]);
   // buildHistogram(result[0]);
 
@@ -1247,7 +1253,9 @@ function bodyEvents(data){
     if(zoomed){
       zoomed = false;
       d3.select("#click-circle").style("pointer-events","all")
-      svg.transition().duration(1000).style("transform","translate3d(0,0,0) scale(1)")
+      svg
+        //.transition().duration(1000)
+        .style("transform","translate3d(0,0,0) scale(1,1)")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
       svg.classed("head-zoomed",false);
       svg.classed("head-visible",false);
@@ -1385,13 +1393,18 @@ function bodyEvents(data){
       svg.classed("head-zoomed",true);
       svg.classed("head-visible",true);
       svg.classed("body-visible",false);
-      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3)")
+      svg
+        //.transition().duration(1000)
+        .style("transform"," translate3d(0,0,0) scale(3,3)")
     }
     else {
       zoomed = false;
       d3.select(this).style("pointer-events","all")
-      svg.select("#zoom").transition().duration(1000).style("opacity",1);
-      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(1)")
+      svg.select("#zoom")
+        .transition().duration(1000).style("opacity",1);
+      svg
+        //.transition().duration(1000)
+        .style("transform"," translate3d(0,0,0) scale(1,1)")
     }
   })
   .on("mouseover",function(d,i){
@@ -1415,7 +1428,7 @@ function setupBodyImg(data){
     if(!zoomed){
       d3.select(this).style("pointer-events","none")
       zoomed = true;
-      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3)")
+      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3,3)")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
       svg.select("#face-parts").style("display","block")
       svg.select("#body-parts").style("display","none")
