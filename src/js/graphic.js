@@ -1059,7 +1059,7 @@ function initBodyScroller(){
         }
         return false;
       })
-      svg.select("#click-circle").style("pointer-events","all")
+      svg.selectAll("#click-circle").style("pointer-events","all")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
     }
   }
@@ -1252,7 +1252,7 @@ function bodyEvents(data){
   let svg = d3.selectAll(".body-img").on("click",function(){
     if(zoomed){
       zoomed = false;
-      d3.select("#click-circle").style("pointer-events","all")
+      d3.selectAll("#click-circle").style("pointer-events","all")
       svg
         //.transition().duration(1000)
         .style("transform","translate3d(0,0,0) scale(1,1)")
@@ -1359,18 +1359,18 @@ function bodyEvents(data){
 
   }
 
-  d3.selectAll("#body-parts").selectAll("path")
+  svg.selectAll("#body-parts").selectAll("path")
     .on("mouseover",function(){
       mouseover(this,"body");
     })
     .on("mouseout",function(){
-      d3.select("#parts").selectAll("path").style("stroke",null);
+      svg.select("#parts").selectAll("path").style("stroke",null);
 
       toolTip
         .style("display","none");
     })
 
-  d3.selectAll("#face-parts").selectAll("path")
+  svg.selectAll("#face-parts").selectAll("path")
     .on("mouseover",function(){
       mouseover(this,"face");
     })
@@ -1384,7 +1384,8 @@ function bodyEvents(data){
       d3.event.stopPropagation();
     });
 
-  let face = svg.select("#click-circle").on("click",function(d){
+  let face = svg.selectAll("#click-circle").on("click",function(d){
+    console.log("clicking");
     d3.event.stopPropagation();
     if(!zoomed){
       zoomed = true;
@@ -1424,7 +1425,7 @@ function bodyEvents(data){
 function setupBodyImg(data){
   let zoomed = false;
 
-  let face = d3.select("#click-circle").on("click",function(d){
+  let face = d3.selectAll("#click-circle").on("click",function(d){
     if(!zoomed){
       d3.select(this).style("pointer-events","none")
       zoomed = true;
