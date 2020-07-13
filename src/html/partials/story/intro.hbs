@@ -1,14 +1,12 @@
 <section>
 	<p class="logo-wrapper">A project from the <a class="text-underline" href="/">The Pudding</a></p>
-	<div class="title-wrapper">
+	<div id="title-selector" class="title-wrapper">
 		<div class="mobile-svg">
 			<img class="title-svg" inline src='title-svg-mobile-2.svg'>
 		</div>
 		<div class="desktop-svg">
 			<img class="title-svg" inline src='title-svg-4.svg'>
 		</div>
-
-
 
 		<picture>
 		   <source
@@ -23,36 +21,30 @@
 	         sizes="100vw">
 		   <img class="story-img title-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}">
 		</picture>
-
-
-
-		<!-- <img class="story-img title-img" src="assets/images/title-mobile-2.png" alt="{{{doc.titleImgAlt}}}"> -->
-		<!-- <img class="story-img title-img" src="assets/images/{{{doc.titleImg}}}.png" alt="{{{doc.titleImgAlt}}}"> -->
 	</div>
 
 	<div class="byline">
 		<p>by <a href="https://pudding.cool/author/erin-davis/">Erin Davis</a>. Illustrations by <a href="https://pudding.cool/author/liana-sposto/">Liana Sposto</a> </p>
 	</div>
-	<div class="butterfly">
 
-	</div>
 	<p class="text-large">{{{doc.fairyAlt}}}</p>
 
-	<picture>
-		 <source
-				 srcset="assets/images/fairy_1920.png 1920w, assets/images/fairy_1200.png 1200w, assets/images/fairy_750.png 750w, assets/images/fairy_500.png 500w"
-				 sizes="(max-width: 500px) 500px, 100vw"
-		 >
-		 <img class="story-img fairy-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
-	</picture>
+	<div class="fairy-img-wrapper">
+		<img class="fairy-first-svg" inline src='fairy-first.svg'>
+		<picture>
+			 <source
+					 srcset="assets/images/fairy_1920.png 1920w, assets/images/fairy_1200.png 1200w, assets/images/fairy_750.png 750w, assets/images/fairy_500.png 500w"
+					 sizes="(max-width: 500px) 500px, 100vw"
+			 >
+			 <img class="story-img fairy-img" src="assets/images/{{{doc.fairy}}}.png" alt="{{{doc.fairyAlt}}}">
+		</picture>
+
+	</div>
+
 	{{#each doc.introText}}
 		<p class='prose'>{{{value}}}</p>
 	{{/each}}
 	<div id="fairy-2" class="fairy-wrapper-2">
-
-
-
-
 		<img class="fairy-2-svg" inline src='fairy-2.svg'>
 
 		<picture>
@@ -71,10 +63,10 @@
 	{{/each}}
 
 	<div id="parser" class="parser-wrapper">
-		<img class="parser-svg" inline src='parser-1-4.svg'>
+		<img class="parser-svg" inline src='parser_1-6.svg'>
 		<picture>
 			 <source
-					 srcset="assets/images/parser_1200.png 1200w, assets/images/parser_900.png 900w, assets/images/parser_700.png 700w, assets/images/parser_400.png 400w"
+					 srcset="assets/images/parser_1_1200.png 1200w, assets/images/parser_1_900.png 900w, assets/images/parser_1_700.png 700w, assets/images/parser_1_400.png 400w"
 					 sizes="(max-width: 600px) 600px, 100vw"
 			 >
 			 <img class="story-img parser-img" src="assets/images/{{{doc.parser}}}.png" alt="{{{doc.parserAlt}}}">
@@ -131,6 +123,9 @@
 
 		</div>
 	</div>
+
+
+
 	<div class="post-quiz-text-wrapper">
 	{{#each doc.postQuiz}}
 		<p class='prose post-quiz-text'>{{{value}}}</p>
@@ -138,9 +133,7 @@
 	</div>
 
 
-	<div class="puff">
 
-	</div>
 
 	<div id="body-graphic" class="graphic-wrapper">
 		<div class="graphic">
@@ -195,7 +188,8 @@
 			{{/each}}
 		</div>
 	</div>
-	<div class="brush">
+
+	<div class="puff">
 
 	</div>
 
@@ -216,6 +210,7 @@
 
 
 	</div>
+
 
 
 	<!-- <img class="story-img hermione-img antialias" src="assets/images/{{{doc.hermioneImg}}}.png" alt="{{{doc.hermioneImgAlt}}}"> -->
@@ -243,7 +238,8 @@
 
 	</div>
 
-
+	<div class="brush">
+	</div>
 
 
 	{{#each doc.adjPreChart}}
@@ -296,10 +292,13 @@
 			>
 			<img class="story-img end-img" src="assets/images/{{{doc.endImg}}}.png" alt="">
 		</picture>
-
-
-
-
+	</div>
+	<div class="method">
+		<p class="section-header">How I made this</p>
+		{{#each doc.method}}
+			<p class='prose'>{{{value}}}</p>
+		{{/each}}
+		<button type="button" name="button">Read More</button>
 	</div>
 
 

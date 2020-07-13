@@ -1,5 +1,6 @@
+body
+  background-color rgb(255, 250, 243)
 main
-  background rgba(254, 239, 215, 0.28)
   .section-header
     font-size 38px
     margin-top 3rem
@@ -72,6 +73,8 @@ main
     tspan
       font-family 'Walter Turncoat'
 #adj-graphic
+  margin 0 auto
+  margin-top 3rem
   max-width 1450px
   .graphic
     overflow hidden
@@ -84,16 +87,13 @@ main
       margin-right 0
       width 700px
       margin-left auto
+      max-height 1080px
   .chart
     overflow scroll
     flex-grow 1
     height 1px
     position relative
-    @media (min-width: 700px)
-      overflow visible
-      margin-top 40px
-    @media screen and (max-width: 700px)
-      margin-top 0px
+    margin-top 0px
   .graphic-title-dek
     max-width 600px
   .graphic-title-hed
@@ -241,6 +241,13 @@ main
       margin 0
       margin-left auto
       max-width 600px
+      max-height 1080px
+    @media screen and (min-width: 1920px)
+      right auto
+      margin 0
+      margin-left auto
+      max-width 100%
+      max-height none
     @media screen and (max-width: 600px)
         overflow hidden
     .body-img
@@ -527,7 +534,7 @@ main
     left 0px
     z-index 0
     @media (min-width: 700px)
-      top calc(50% + 16px)
+      top calc(50% + 15px)
   .scales
     .one-scales, .two-scales
       position absolute
@@ -585,10 +592,10 @@ main
         letter-spacing 1px
         color rgba(0, 0, 0, .8)
         color #8e5430
-      height calc(100% - 110px)
+      height calc(100% - 257px)
 
     .first
-      height calc(100% - 111px)
+      height calc(100% - 257px)
       &:before
         top -76px
 
@@ -710,7 +717,7 @@ main
     margin 0 auto
     height auto
 
-.hermione-wrapper, .hermione-wrapper-text, .hermione-wrapper-2, .parser-wrapper, .end-wrapper
+.hermione-wrapper, .hermione-wrapper-text, .hermione-wrapper-2, .parser-wrapper, .end-wrapper, .fairy-img-wrapper
   max-width 600px
   margin 0 auto
   position relative
@@ -720,6 +727,7 @@ main
     left 0
     width 100%
     z-index 100
+    top 0
     tspan
       font-family 'Walter Turncoat'
   .hermione-img, .hermione-img-text
@@ -730,7 +738,12 @@ main
   svg
     text, tspan
       font-family 'Lyon Display Web'
-    #text758
+      opacity 0
+    .atlas
+      font-family $atlas
+      text-transform uppercase
+      font-weight 400
+    #library_card_text
       text, tspan
         font-family 'Walter Turncoat'
 
@@ -755,7 +768,6 @@ main
   position relative
   svg
     position absolute
-    top -6vh
     left 0
     width 100%
     z-index 100
@@ -1539,6 +1551,7 @@ button.swiper-pagination-bullet {
     background-size contain
 
 .brush-image
+  margin-bottom 3rem
   &:before
     position absolute
     background-image url('assets/images/brush.png')
@@ -1594,3 +1607,52 @@ button.swiper-pagination-bullet {
     border none
     margin-top 0
     text-transform uppercase
+
+
+.method
+  max-height 500px
+  overflow hidden
+  position relative
+  .section-header
+    font-size 15px
+    font-family $atlas
+    text-align center
+    text-transform uppercase
+    letter-spacing 1px
+  p
+    font-size 18px
+  img
+    display none
+    max-width 300px
+    margin 0 auto
+  button
+    position absolute
+    bottom 0
+    left 0
+    right 0
+    margin 0 auto
+    z-index 100000000
+    padding .5rem 1rem
+    border-radius 3px
+    border 1px solid #ccc
+    font-size 14px
+    font-weight 500
+  &:before
+    content ''
+    width 100%
+    height calc(100% - 100px)
+    bottom 0
+    left 0
+    right 0
+    margin 0 auto
+    position absolute
+    z-index 1000000
+    background linear-gradient(0deg, #fffaf3, rgba(255, 250, 243, 0))
+.expanded
+  max-height none
+  img
+    display block
+  &:before
+    display none
+  button
+    display none

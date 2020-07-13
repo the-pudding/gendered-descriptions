@@ -6,6 +6,8 @@ import rough from 'roughjs/bundled/rough.cjs';
 import db from './db';
 import { annotate } from 'rough-notation';
 
+import enterView from 'enter-view'
+
 const VERSION = Date.now();
 let dataURL = 'https://pudding.cool/2020/07/gendered-descriptions-data/data.json?version='+VERSION
 let adjGenderDataLoaded = false;
@@ -15,6 +17,7 @@ let quiz = null;
 let removedWords = ["her","blond","of","be"]
 /* global d3 */
 let zoomed = false;
+let adjCount = 50;
 let spaceBetween = 20;
 function resize() {
   setupAnnotations();
@@ -26,7 +29,7 @@ function initQuiz(){
     ["<span class=pos></span> bare legs, crossed, show the blue dabs of varicose veins.",0],
     ["<span class=sub></span> paused and wrung <span class=pos></span> little hands.",0],
     ["The skin of <span class=pos></span> naked shoulders appeared silver in the glow of lights through the windows.",0],
-    ["<span class=sub></span> panting tongue hangs out; <span class=pos></span> red lips are thick and fresh.",0],
+    ["<span class=pos></span> panting tongue hangs out; <span class=pos></span> red lips are thick and fresh.",0],
     ["<span class=sub></span> had an oval face, with rosy cheeks and lustrous skin.",0],
     ["<span class=sub></span> limped a bit from <span class=pos></span> wounded leg.",1],
     ["<span class=pos></span> lower lip is split, and the blood has dried blackly.",1],
@@ -163,30 +166,108 @@ function initDek(){
   })
 }
 
-function fairyScroll(){
-  const scroller = scrollama();
-  const fairySvg = d3.select("#fairy-2").select("svg");
-  const offsetScale = d3.scaleLinear().domain([0,1]).range([-3,2]);
+function endScroll(){
+  const endSvg = d3.select("#end").select("svg");
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,2]);
 
-  scroller
-    .setup({
-      container: '#fairy-2', // our outermost scrollytelling element
-      step: ".fairy-2-svg",
-      progress:true,
-      offset: .7 // set the trigger to be 1/2 way down screen
-    })
-    .onStepEnter(response => {
+  const endScrolling = enterView({
+    selector: "#end",//'.lollipop-g',
+    enter(el) {
+      endSvg.selectAll("text").transition().duration(500).delay(function(d,i){
+        return i*30;
+      }).style("opacity",1)
+      endSvg.selectAll("tspan").transition().duration(500).delay(function(d,i){
+        return i*30;
+      }).style("opacity",1)
+    },
+    offset: 0, // enter at middle of viewport
+    once: true // trigger just once
+  });
+}
+
+function hermioneScroll(){
+  const hermSvg = d3.select("#hermione-2").select("svg");
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,2]);
+
+  const hermScrolling = enterView({
+    selector: "#hermione-2",//'.lollipop-g',
+    progress(el, progress) {
+      let offset = offsetScale(progress)*5+"%";
+      hermSvg.style("transform","translate(0,"+offset+")");
+    },
+    offset: .5, // enter at middle of viewport
+    once: false // trigger just once
+  });
+}
+
+function parserScroll(){
+  const parserSvg = d3.select("#parser").select("svg");
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,2]);
+
+  const parserScrolling = enterView({
+    selector: "#parser",//'.lollipop-g',
+    enter(el) {
+      parserSvg.selectAll("text").transition().duration(500).delay(function(d,i){
+        return i*30;
+      }).style("opacity",1)
+      parserSvg.selectAll("tspan").transition().duration(500).delay(function(d,i){
+        return i*30;
+      }).style("opacity",1)
+    },
+    offset: 0, // enter at middle of viewport
+    once: true // trigger just once
+  });
+
+}
+
+function introScroll(){
+
+  let titleSvg;
+  if(window.innerWidth > window.innerHeight){
+    titleSvg = d3.select(".title-wrapper").select(".desktop-svg").select("svg");
+  }
+  else {
+    titleSvg = d3.select(".title-wrapper").select(".mobile-svg").select("svg");
+  }
+
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([0,2]);
+
+  const introScrolling = enterView({
+    selector: "#title-selector",//'.lollipop-g',
+    progress(el, progress) {
+      let offset = offsetScale(progress)*5+"%";
+      titleSvg.style("transform","translate(0,"+offset+")");
+    },
+    offset: 1, // enter at middle of viewport
+    once: false // trigger just once
+  });
+
+}
+
+function fairyScroll(){
+
+  const fairySvg = d3.select("#fairy-2").select("svg");
+  const offsetScale = d3.scaleLinear().domain([0,1]).range([-2,1]);
+
+  const fairyScrolling = enterView({
+    selector: "#fairy-2",//'.lollipop-g',
+    enter(el) {
       if(!fairyTextFadedIn){
-        fairyTextFadedIn = true;
         fairySvg.selectAll("tspan").transition().duration(500).delay(function(d,i){
           return i*30;
         }).style("opacity",1)
+        fairyTextFadedIn = true;
       }
-    })
-    .onStepProgress(response => {
-      fairySvg.style("top",offsetScale(response.progress)+"vw");
-    })
-    ;
+
+    },
+    progress(el, progress) {
+      let offset = offsetScale(progress)+"%";
+      fairySvg.select("#VINES").style("transform","translate(0,"+offset+")");
+    },
+    offset: 0, // enter at middle of viewport
+    once: false, // trigger just once
+  });
+
 }
 
 function initAdjScroller(){
@@ -213,6 +294,7 @@ function initAdjScroller(){
 }
 
 function filterData(data){
+
   return data.filter(function(d){
     d.shareF = +d.totalF / +d.total;
     if(d.diff > 0){
@@ -221,8 +303,19 @@ function filterData(data){
     else {
       d.logDiff = Math.log2(Math.abs(+d.diff))*-1;
     }
-    return removedWords.indexOf(d.adj) == -1
-  });
+    if(d.adj == "bushy"){
+      return d;
+    }
+    return removedWords.indexOf(d.adj) == -1 && d.total > 25;
+  }).sort(function(a,b){
+      if(b.adj == "bushy"){
+        return 1;
+      }
+      if(a.adj == "bushy"){
+        return 1;
+      }
+      return b.total - a.total
+    }).slice(0,adjCount);
 }
 
 function buildAdjChart(data){
@@ -230,13 +323,7 @@ function buildAdjChart(data){
   let adjM = null;
   let adjF = null;
 
-
-
   function changeDataSet(dataSet){
-
-    dataSet = dataSet.filter(function(d){
-      return d.total > 50 || d.adj == "bushy";
-    });
 
     nested = d3.nest().key(function(d){
         return d.BodyPart;
@@ -289,12 +376,11 @@ function buildAdjChart(data){
 
   }
 
-
   let container = d3.select(".chart");
   let width = Math.min(700,d3.select("body").node().offsetWidth);
   let margin = 50;
   if(d3.select("body").node().offsetWidth > 750){
-    margin = 50
+    margin = 75
   }
   let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
   let height = 400;
@@ -321,12 +407,6 @@ function buildAdjChart(data){
 
   container.style("width",width+"px")
   // container.style("height",height+"px")
-
-  console.log(data);
-
-  data = data.filter(function(d){
-    return d.total > 50 || d.adj == "bushy";
-  });
 
   let nested = d3.nest().key(function(d){
       return d.BodyPart;
@@ -407,6 +487,8 @@ function buildAdjChart(data){
 
     dataSelected = nestedMap.get(bodyPart).values;
     dataSelected = filterData(dataSelected);
+
+    console.log(dataSelected);
     setScales();
 
     container.selectAll("p").remove();
@@ -467,7 +549,6 @@ function buildAdjChart(data){
       .style("top",function(d){
         return d.y+"px";
       })
-
   }
 
   function setScales(){
@@ -487,6 +568,8 @@ function buildAdjChart(data){
     }
 
     x.domain(dataExtent).clamp(true);
+
+    console.log(x.range());
 
     midScale.transition().duration(1000).delay(500)
       .style("left",x(0)+"px");
@@ -1081,7 +1164,16 @@ function initBodyScroller(){
   window.addEventListener("resize", scroller.resize);
 
 }
+function setupMethod(){
+  d3.select(".adj-chart").append("img")
+    .attr("src","assets/images/adj_structure.png")
 
+  d3.select(".formula-chart").append("img")
+    .attr("src","assets/images/formula1.png")
+
+  d3.select(".formula-chart-two").append("img")
+    .attr("src","assets/images/formula2.png")
+}
 function setupAnnotations(){
 
   d3.selectAll(".rough-annotation").remove();
@@ -1096,11 +1188,17 @@ function setupAnnotations(){
   });
 }
 function init() {
+
   if(d3.select("body").classed("is-mobile")){
     spaceBetween = 10;
   }
+
+
   //
   d3.select(".score-avg").classed("text-underline",true);
+  d3.select(".method").select("button").on("click",function(d){
+    d3.select(".method").classed("expanded",true)
+  })
   //
   setupAnnotations();
   //
@@ -1119,6 +1217,11 @@ function init() {
   initBodyScroller();
   initAdjScroller();
   fairyScroll();
+  introScroll();
+  parserScroll();
+  hermioneScroll();
+  endScroll();
+  setupMethod();
   //
   //
   loadData([dataURL]).then(result => {
