@@ -16,7 +16,6 @@ function resize() {
     previousWidth = width;
     graphic.resize();
   }
-
 }
 
 
