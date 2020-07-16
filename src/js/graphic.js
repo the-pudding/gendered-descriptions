@@ -247,7 +247,9 @@ function introScroll(){
 function fairyScroll(){
 
   const fairySvg = d3.select("#fairy-2").select("svg");
-  const offsetScale = d3.scaleLinear().domain([0,1]).range([-2,1]);
+  // const offsetScale = d3.scaleLinear().domain([0,1]).range([-2,1]);
+
+  fairySvg.selectAll("tspan").style("opacity",0)
 
   const fairyScrolling = enterView({
     selector: "#fairy-2",//'.lollipop-g',
@@ -258,14 +260,9 @@ function fairyScroll(){
         }).style("opacity",1)
         fairyTextFadedIn = true;
       }
-
-    },
-    progress(el, progress) {
-      let offset = offsetScale(progress)+"%";
-      fairySvg.select("#VINES").style("transform","translate(0,"+offset+")");
     },
     offset: 0, // enter at middle of viewport
-    once: false, // trigger just once
+    once: true, // trigger just once
   });
 
 }
@@ -392,6 +389,7 @@ function buildAdjChart(data){
     height = container.node().offsetHeight - 150;//Math.min(vh - 300,600);
   }
 
+
   let fontExtent = [16,36];
   if(d3.select("body").node().offsetWidth < 900){
     fontExtent = [12,24];
@@ -399,11 +397,14 @@ function buildAdjChart(data){
   if(d3.select("body").node().offsetWidth < 700){
     height = vh - 150;
   }
+  if(d3.select("body").node().offsetWidth < 350){
+    height = vh - 105;
+    adjCount = 30;
+  }
+
 
   let titlePart = d3.select("#adj-graphic").select(".graphic-title-hed").select(".part")
   let titleVerb = d3.select("#adj-graphic").select(".graphic-title-hed").select(".verb")
-
-
 
   container.style("width",width+"px")
   // container.style("height",height+"px")
@@ -1166,13 +1167,13 @@ function initBodyScroller(){
 }
 function setupMethod(){
   d3.select(".adj-chart").append("img")
-    .attr("src","assets/images/adj_structure.png")
+    .attr("src","assets/images/method.png")
 
   d3.select(".formula-chart").append("img")
-    .attr("src","assets/images/formula1.png")
+    .attr("src","assets/images/bodyFormula.png")
 
   d3.select(".formula-chart-two").append("img")
-    .attr("src","assets/images/formula2.png")
+    .attr("src","assets/images/adj_Formula.png")
 }
 function setupAnnotations(){
 
@@ -1183,6 +1184,7 @@ function setupAnnotations(){
   annotation.show();
 
   const textUnderlines = d3.selectAll(".text-underline").each(function(d,i){
+    console.log(d3.select(this).text());
     let element = d3.select(this).node();
     annotate(element, { type: 'underline', color: '#a484f0', multiline: true, animate: false }).show();
   });
