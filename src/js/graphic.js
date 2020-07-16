@@ -1007,7 +1007,7 @@ function initBodyScroller(){
       svg.classed("body-visible",false);
       svg
         //.transition().duration(1000)
-        .style("transform","translate3d(0,0,0) scale(3,3)")
+        .style("transform","translate(5%,0) scale(2.5)")
       svg.select("#hair").selectAll("path").classed("highlighted",false).classed("highlighted-two",false);
     }
     else if(index == 1){
@@ -1031,7 +1031,7 @@ function initBodyScroller(){
         ;
       svg
         //.transition().duration(1000)
-        .style("transform","translate3d(0,0,0) scale(3,3)")
+        .style("transform","translate(5%,0) scale(2.5)")
       svg.select("#click-circle").style("pointer-events","none")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
       svg.select("#nipple").selectAll("path").style("stroke",null);
@@ -1047,7 +1047,7 @@ function initBodyScroller(){
       svg.classed("body-visible",true);
       svg
         //.transition().duration(1000)
-        .style("transform","translate3d(0,0,0) scale(1,1)")
+        .style("transform","translate(0,0) scale(1,1)")
       svg.select("#click-circle").style("pointer-events","all")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
       svg.select("#nipple").selectAll("path").classed("highlighted",function(d,i){
@@ -1360,7 +1360,7 @@ function bodyEvents(data){
       d3.selectAll("#click-circle").style("pointer-events","all")
       svg
         //.transition().duration(1000)
-        .style("transform","translate3d(0,0,0) scale(1,1)")
+        .style("transform","translate(0,0) scale(1,1)")
       svg.select("#zoom").transition().duration(1000).style("opacity",1);
       svg.classed("head-zoomed",false);
       svg.classed("head-visible",false);
@@ -1501,7 +1501,7 @@ function bodyEvents(data){
       svg.classed("body-visible",false);
       svg
         //.transition().duration(1000)
-        .style("transform"," translate3d(0,0,0) scale(3,3)")
+        .style("transform"," translate(5%,0) scale(2.5)")
     }
     else {
       zoomed = false;
@@ -1510,7 +1510,7 @@ function bodyEvents(data){
         .transition().duration(1000).style("opacity",1);
       svg
         //.transition().duration(1000)
-        .style("transform"," translate3d(0,0,0) scale(1,1)")
+        .style("transform"," translate(0,0) scale(1,1)")
     }
   })
   .on("mouseover",function(d,i){
@@ -1534,7 +1534,7 @@ function setupBodyImg(data){
     if(!zoomed){
       d3.select(this).style("pointer-events","none")
       zoomed = true;
-      svg.transition().duration(1000).style("transform"," translate3d(0,0,0) scale(3,3)")
+      svg.transition().duration(1000).style("transform"," translate(5%,0) scale(2.5)")
       svg.select("#zoom").transition().duration(1000).style("opacity",0);
       svg.select("#face-parts").style("display","block")
       svg.select("#body-parts").style("display","none")

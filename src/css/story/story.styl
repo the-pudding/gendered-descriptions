@@ -209,6 +209,7 @@ main
             height 14px
 
   .story
+
     .prose-wrapper
       .w
         background rgba(255, 181, 135, 0.38)
@@ -257,16 +258,10 @@ main
       transform-origin 50% 0%
       flex-grow 1
       height 1px
-      transform translate3d(0,0,0) scale(3)
+      transform translate(5%,0) scale(2.5)
       transition transform .5s
-      -webkit-backface-visibility hidden
-      -moz-backface-visibility hidden
-      -ms-backface-visibility hidden
-      backface-visibility hidden
-      -webkit-perspective 1000
-      -moz-perspective 1000
-      -ms-perspective 1000
-      perspective 1000
+      @media (max-width: 550px)
+        transition none
       #zoom
         opacity 0
       #click-circle
@@ -336,8 +331,11 @@ main
         transform-origin 0 64%
       #body-text
         text
+          stroke-opacity 0
+        .bg-text
           stroke-width 8px
           stroke-opacity .7
+          fill none
         path
           pointer-events none
       #face-labels
@@ -350,8 +348,11 @@ main
           display none
           opacity 0
           transition opacity 1s
+          stroke-opacity 0
+        .bg-text
           stroke-width 4px
           stroke-opacity .7
+          fill none
     .body-visible
       #body-parts
         g:not(#body-labels)
@@ -530,7 +531,7 @@ main
     content ''
     width 100%
     height 2px
-    top 50%
+    top calc(50% - 15px)
     position absolute
     background #c7c7c7
     left 0px
@@ -623,6 +624,7 @@ main
         &:after
           width 75px
           font-size 10px
+          letter-spacing 0px
         &:before
           top -75px
       @media screen and (max-width: 400px)
@@ -807,8 +809,8 @@ footer
     display flex
     flex-direction column
     overflow hidden
-
-
+    z-index 100
+    transform translateZ(0)
     .story-img
       flex-grow 1
       width auto
@@ -817,9 +819,13 @@ footer
   .story
     position relative
     pointer-events none
+    z-index 100000
+    transform translateZ(0)
     .step
       padding-bottom 75vh
       pointer-events none
+      position relative
+      z-index 100000
       .prose-wrapper
         padding 1.5rem 1.5rem
         background white
@@ -828,6 +834,8 @@ footer
         border-left 2px solid black
         background #f7f7f7
         background #fff
+        position relative
+        z-index 100000
         @media screen and (max-width: 500px)
           max-width calc(100% - 30px)
         .prose
@@ -1640,6 +1648,9 @@ button.swiper-pagination-bullet {
     border 1px solid #ccc
     font-size 14px
     font-weight 500
+    background white
+    max-width 200px
+    font-family $atlas
   &:before
     content ''
     width 100%
